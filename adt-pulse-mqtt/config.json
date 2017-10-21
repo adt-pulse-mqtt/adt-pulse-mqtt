@@ -1,0 +1,51 @@
+{
+  "name": "ADT Pulse MQTT",
+  "version": "0.1",
+  "slug": "adt-pulse-mqtt",
+  "description": "ADT Pulse integration with MQTT",
+  "url":"https://github.com/digitalcraig/adt-pulse-mqtt",
+  "startup": "application",
+  "boot": "auto",
+  "host_network" : true,
+  "arch": [
+    "armhf",
+    "amd64"
+  ],
+  "map": [
+    "share:rw",
+    "ssl"
+  ],
+  "options": {
+      "ssl": false,
+      "certfile": "fullchain.pem",
+      "keyfile": "privkey.pem",
+      "pulse_login" : {
+        "username": "",
+        "password": ""
+      },
+      "mqtt_host" :  "localhost",
+      "mqtt_connect_options" :  {
+        "username" : "",
+        "password" : ""
+      },
+      "alarm_state_topic" : "home/alarm",
+      "alarm_command_topic" : "home/alarm/set"
+    },
+    "schema": {
+      "ssl": "bool",
+      "certfile": "str",
+      "keyfile": "str",
+      "pulse_login" : {
+        "username": "str",
+        "password": "str"
+      },
+      "mqtt_host" : "str",
+      "mqtt_connect_options" : {
+         "username" : "str",
+         "password" : "str"
+      },
+      "alarm_state_topic" : "str",
+      "alarm_command_topic": "str"
+    },
+    "image": "digitalcraig/adt-pulse-mqtt-{arch}"
+}

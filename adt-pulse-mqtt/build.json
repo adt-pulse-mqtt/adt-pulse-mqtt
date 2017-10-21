@@ -1,0 +1,6 @@
+{
+  "build_from": {
+    "armhf": "arm32v7/node:slim",
+    "amd64": "amd64/node:slim"
+  }
+}

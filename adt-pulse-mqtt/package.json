@@ -1,0 +1,17 @@
+{
+  "name": "pulse-adt-mqtt",
+  "version": "0.0.1",
+  "description": "Integrate ADT Pulse with MQTT",
+  "author": "Craig Leikis",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "mqtt": "^2.13.0",
+    "cheerio": "latest",
+    "q": "~1.0.1",
+    "request": "latest",
+    "tough-cookie": "^2.3.0"
+  }
+}
