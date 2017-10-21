@@ -6,7 +6,7 @@
   "url":"https://github.com/digitalcraig/adt-pulse-mqtt",
   "startup": "application",
   "boot": "auto",
-  "host_network" : true,
+  "host_network" : false,
   "arch": [
     "armhf",
     "amd64"
