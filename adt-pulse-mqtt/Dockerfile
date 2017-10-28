@@ -1,13 +1,10 @@
 ARG BUILD_FROM
 FROM $BUILD_FROM
 
-USER node
-
 ENV LANG C.UTF-8
 ENV NODE_ENV production
 
-RUN mkdir -p /home/node/adt-pulse-mqtt
-WORKDIR /home/node/adt-pulse-mqtt
+WORKDIR /usr/src/app
 
 # Install app dependencies
 COPY package.json .
