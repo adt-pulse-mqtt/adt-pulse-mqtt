@@ -1,12 +1,13 @@
 ARG BUILD_FROM
 FROM $BUILD_FROM
 
+USER node
+
 ENV LANG C.UTF-8
+ENV NODE_ENV production
 
-# Install requirements for add-on
-#RUN apk add --no-cache jq
-
-WORKDIR /usr/src/adt-pulse-mqtt
+RUN mkdir -p /home/node/adt-pulse-mqtt
+WORKDIR /home/node/adt-pulse-mqtt
 
 # Install app dependencies
 COPY package.json .
