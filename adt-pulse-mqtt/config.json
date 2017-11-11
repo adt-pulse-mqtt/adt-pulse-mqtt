@@ -47,5 +47,5 @@
       "alarm_state_topic" : "str",
       "alarm_command_topic": "str"
     },
-    "image": "digitalcraig/adt-pulse-mqtt-{arch}"
+    "image": "digitalcraig/image-{arch}-adt-pulse-mqtt"
 }
