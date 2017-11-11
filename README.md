@@ -1,2 +1,2 @@
 # adt-pulse-mqtt
-ADT Pulse integration for Home Assistant using MQTT
+ADT Pulse bridge for Home Assistant using MQTT

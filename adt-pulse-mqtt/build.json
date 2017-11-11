@@ -1,7 +1,7 @@
 {
   "build_from": {
-    "armhf": "arm32v7/node:boron-slim",
-	"aarch64": "arm64v8/node:boron-slim",
+    "armhf": "arm32v7/node:boron",
+	"aarch64": "arm64v8/node:boron",
     "amd64": "amd64/node:boron",
 	"i386": "i386/node:6.10.2"
   }
