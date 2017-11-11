@@ -2,7 +2,7 @@
   "name": "ADT Pulse MQTT",
   "version": "0.1",
   "slug": "adt-pulse-mqtt",
-  "description": "ADT Pulse integration with MQTT",
+  "description": "ADT Pulse Bridge using MQTT",
   "url":"https://github.com/digitalcraig/adt-pulse-mqtt",
   "startup": "application",
   "boot": "auto",
