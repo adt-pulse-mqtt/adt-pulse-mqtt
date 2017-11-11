@@ -4,6 +4,9 @@ FROM $BUILD_FROM
 ENV LANG C.UTF-8
 ENV NODE_ENV production
 
+# Install node
+RUN apk add --update nodejs
+
 WORKDIR /usr/src/app
 
 # Install app dependencies
