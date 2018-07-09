@@ -37,14 +37,14 @@ module.exports = pulse;
 (function() {
 
 	this.config = {
-		initialurl: 'https://portal.adtpulse.com/myhome/access/signin.jsp',
-		authUrl: 'https://portal.adtpulse.com/myhome/access/signin.jsp?e=n&e=n&&partner=adt',
-		sensorUrl: 'https://portal.adtpulse.com/myhome/ajax/homeViewDevAjax.jsp',
-		orbUrl: 'https://portal.adtpulse.com/myhome/ajax/orb.jsp',
-		statusChangeUrl: 'https://portal.adtpulse.com/myhome/quickcontrol/serv/ChangeVariableServ',
-		otherStatusUrl: 'https://portal.adtpulse.com/myhome/ajax/currentStates.jsp',
-		syncUrl: 'https://portal.adtpulse.com/myhome/Ajax/SyncCheckServ',
-		logoutUrl: 'https://portal.adtpulse.com/myhome/access/signout.jsp'
+		initialurl: 'https://portal.adtpulse.com/myhome/9.7.0-31/access/signin.jsp',
+		authUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/access/signin.jsp?e=n&e=n&&partner=adt',
+		sensorUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/ajax/homeViewDevAjax.jsp',
+		orbUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/ajax/orb.jsp',
+		statusChangeUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/quickcontrol/serv/ChangeVariableServ',
+		otherStatusUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/ajax/currentStates.jsp',
+		syncUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/Ajax/SyncCheckServ',
+		logoutUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/access/signout.jsp'
 	};
 
 	this.configure = function(options) {
