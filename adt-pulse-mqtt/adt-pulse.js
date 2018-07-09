@@ -41,6 +41,7 @@ module.exports = pulse;
 		authUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/access/signin.jsp?e=n&e=n&&partner=adt',
 		sensorUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/ajax/homeViewDevAjax.jsp',
 		orbUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/ajax/orb.jsp',
+		summaryUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/summary/summary.jsp',
 		statusChangeUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/quickcontrol/serv/ChangeVariableServ',
 		otherStatusUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/ajax/currentStates.jsp',
 		syncUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/Ajax/SyncCheckServ',
@@ -228,7 +229,7 @@ module.exports = pulse;
 				headers: {
 					'Host': 'portal.adtpulse.com',
 					'User-Agent': ua,
-					'Referer': 'https://portal.adtpulse.com/myhome/9.7.0-31/summary/summary.jsp'
+					'Referer': this.config.summaryUrl
 				},
 				form:{
 					sat: sat,
@@ -255,7 +256,8 @@ module.exports = pulse;
 
 		request(
 			{
-				url: this.config.orbUrl,
+				//url: this.config.orbUrl,
+				url: this.config.summaryUrl,
 				jar: j,
 				headers: {
 					'User-Agent': ua
