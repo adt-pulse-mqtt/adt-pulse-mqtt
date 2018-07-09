@@ -269,7 +269,7 @@ module.exports = pulse;
 
 				//get the sat code
 				try{
-					sat = body.match(/sat=([^&]*)&/)[1];
+					sat = body.match(/sat.+value=\"(.+)\"/)[1];
 				}
 				catch (e){
 					console.log('error getting sat ::'+ body + '::');
