@@ -6,6 +6,8 @@ var myAlarm = new Pulse(config.pulse_login.username, config.pulse_login.password
 var client = new mqtt.connect("mqtt://"+config.mqtt_host,config.mqtt_connect_options);
 var alarm_state_topic = config.alarm_state_topic;
 var alarm_command_topic = config.alarm_command_topic;
+var zone_state_topic = config.zone_state_topic;
+
 var alarm_last_state = "unknown";
 
 // Register Callbacks:
@@ -47,7 +49,7 @@ myAlarm.onStatusUpdate(
 
 myAlarm.onZoneUpdate(
   function(device) {
-    
+    console.log(logtime.toLocaleString()+": Zone state: receieved '"+ device + "' will push to "+ zone_state_topic);
   }
 )
 
