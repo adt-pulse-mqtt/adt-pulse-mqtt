@@ -161,10 +161,7 @@ module.exports = pulse;
 					try {
 						var json = JSON.parse(body.trim());
 						json.items.forEach(function(obj){
-					   		if(obj.tags.indexOf('zone') > -1){
-					   			// obj.icon = obj.icon.replace('devStat', '');
-					   			zoneUpdateCB(obj)
-					   		}
+					   		zoneUpdateCB(obj);
 						})
 					} catch(e) {
 					   console.log('Pulse: Invalid Zone JSON');
