@@ -266,8 +266,13 @@ module.exports = pulse;
 				var actions = [];
 
 				//get the sat code
-				sat = body.match(/sat=([^&]*)&/)[1];
-
+				try{
+					sat = body.match(/sat=([^&]*)&/)[1];
+				}
+				catch (e){
+					console.log('error getting sat ::'+ body + '::');
+				}
+				
 				//parse the html
 				$ = cheerio.load(body);
 
