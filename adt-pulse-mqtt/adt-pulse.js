@@ -160,14 +160,9 @@ module.exports = pulse;
 				} else {
 					try {
 						var json = JSON.parse(body.trim());
-						json.items.forEach(function(zone){
-							zone.status = zone.state.icon;
-							zone.activityTs = zone.state.activityTs;
-							zone.statusTxt = zone.state.statusTxt;
-							delete zone.deprecatedAction;
-							delete zone.devIndex;
-							delete zone.state;
-					   		zoneUpdateCB(zone);
+						console.log ("Got zones "+json);
+						json.items.forEach(function(obj){
+					   		zoneUpdateCB(obj);
 						})
 					} catch(e) {
 					   console.log('Pulse: Invalid Zone JSON');
