@@ -91,9 +91,11 @@ module.exports = pulse;
 						},
 						function(err, httpResponse, body){
 							that.isAuthenticating = false;
-							if(err || httpResponse.req.path !== '/myhome/6.18.0-238/summary/summary.jsp'){
+							if(err || httpResponse.req.path !== '/myhome/9.7.0-31/summary/summary.jsp'){
 								that.authenticated = false;
 								console.log('Pulse: Authentication Failed');
+								console.log('Pulse: httpResponse:' + httpResponse);
+								console.log('Pulse: body:'+body);
 								deferred.reject()
 							} else {
 								that.authenticated = true;
@@ -226,7 +228,7 @@ module.exports = pulse;
 				headers: {
 					'Host': 'portal.adtpulse.com',
 					'User-Agent': ua,
-					'Referer': 'https://portal.adtpulse.com/myhome/summary/summary.jsp'
+					'Referer': 'https://portal.adtpulse.com/myhome/9.7.0-31/summary/summary.jsp'
 				},
 				form:{
 					sat: sat,
@@ -322,7 +324,7 @@ module.exports = pulse;
 				jar: j,
 				headers: {
 					'User-Agent': ua,
-					'Referer': 'https://portal.adtpulse.com/myhome/summary/summary.jsp'
+					'Referer': 'https://portal.adtpulse.com/myhome/9.7.0-31/summary/summary.jsp'
 				},
 			},
 			function(err, httpResponse, body) {
@@ -366,7 +368,7 @@ module.exports = pulse;
 					followAllRedirects: true,
 					headers: {
 						'User-Agent': ua,
-						'Referer': 'https://portal.adtpulse.com/myhome/summary/summary.jsp'
+						'Referer': 'https://portal.adtpulse.com/myhome/9.7.0-31/summary/summary.jsp'
 					},
 				},function(err, response, body){
 					console.log('Pulse: Syncing', body);
