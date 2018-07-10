@@ -28,9 +28,9 @@
         "username" : "",
         "password" : ""
       },
-      "alarm_state_topic" : "home/alarm/state",
-      "alarm_command_topic" : "home/alarm/cmd",
-      "zone_state_topic" : "home/zone/"
+      "alarm_state_topic": "home/alarm/state",
+      "alarm_command_topic": "home/alarm/cmd",
+      "zone_state_topic": "adt/zone"
     },
     "schema": {
       "ssl": "bool",

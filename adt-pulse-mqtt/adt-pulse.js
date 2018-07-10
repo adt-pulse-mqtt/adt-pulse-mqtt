@@ -43,6 +43,8 @@ module.exports = pulse;
 		orbUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/ajax/orb.jsp',
 		summaryUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/summary/summary.jsp',
 		statusChangeUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/quickcontrol/serv/ChangeVariableServ',
+		armUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/quickcontrol/serv/RunRRACommand',
+		disarmUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/quickcontrol/armDisarmRRA.jsp?href=rest/adt/ui/client/security/setArmState',
 		otherStatusUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/ajax/currentStates.jsp',
 		syncUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/Ajax/SyncCheckServ',
 		logoutUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/access/signout.jsp'
@@ -62,7 +64,7 @@ module.exports = pulse;
 		if(this.authenticated){
 			deferred.resolve()
 		} else {
-			console.log((new Date).toLocaleString()+' Pulse: Authenticating');
+			console.log((new Date()).toLocaleString()+' Pulse: Login called Authenticating');
 
 			j = request.jar();
 
@@ -94,13 +96,13 @@ module.exports = pulse;
 							that.isAuthenticating = false;
 							if(err || httpResponse.req.path !== '/myhome/9.7.0-31/summary/summary.jsp'){
 								that.authenticated = false;
-								console.log((new Date).toLocaleString() + ' Pulse: Authentication Failed');
-								console.log((new Date).toLocaleString() + ' Pulse: httpResponse:' + httpResponse);
+								console.log((new Date()).toLocaleString() + ' Pulse: Authentication Failed');
+								console.log((new Date()).toLocaleString() + ' Pulse: httpResponse:' + httpResponse);
 								//console.log((new Date).toLocaleString() + ' Pulse: body:'+body);
 								deferred.reject();
 							} else {
 								that.authenticated = true;
-								console.log((new Date).toLocaleString() + ' Pulse: Authentication Success');
+								console.log((new Date()).toLocaleString() + ' Pulse: Authentication Success');
 								deferred.resolve();
 								that.updateAll.call(that);
 							}
@@ -119,6 +121,8 @@ module.exports = pulse;
 
 		var that = this;
 
+		console.log((new Date()).toLocaleString() + ' Pulse: Logout');
+
 		request(
 			{
 				url: this.config.logoutUrl,
@@ -135,6 +139,8 @@ module.exports = pulse;
 
 	this.updateAll = function () {
 		var that = this;
+		console.log((new Date()).toLocaleString() + ' Pulse: updateAll');
+
 		this.getAlarmStatus().then(function(){
 			that.getDeviceStatus();
 			that.getZoneStatus();
@@ -143,7 +149,7 @@ module.exports = pulse;
 
 
 	this.getZoneStatus = function() {
-		console.log((new Date).toLocaleString() + ' Pulse: Getting Zone Statuses');
+		console.log((new Date()).toLocaleString() + ' Pulse.getZoneStatus: Getting Zone Statuses');
 		var deferred = q.defer()
 
 		request(
@@ -156,7 +162,7 @@ module.exports = pulse;
 			},
 			function(err, httpResponse, body) {
 				if(err){
-					console.log((new Date).toLocaleString() + ' Pulse: Zone JSON Failed');
+					console.log((new Date()).toLocaleString() + ' Pulse.getZoneStatus: Zone JSON Failed');
 				} else {
 					try {
 						var json = JSON.parse(body.trim());
@@ -170,7 +176,7 @@ module.exports = pulse;
 					   		zoneUpdateCB(o);
 						})
 					} catch(e) {
-					   console.log((new Date).toLocaleString() + ' Pulse: Invalid Zone JSON'+e.stack);
+					   console.log((new Date()).toLocaleString() + ' Pulse: Invalid Zone JSON'+e.stack);
 					}
 				}
 
@@ -181,7 +187,7 @@ module.exports = pulse;
 	},
 
 	this.getDeviceStatus = function() {
-		console.log((new Date).toLocaleString() + ' Pulse: Getting Device Statuses');
+		console.log((new Date()).toLocaleString() + ' Pulse.getDeviceStatus: Getting Device Statuses');
 
 		request(
 			{
@@ -202,7 +208,7 @@ module.exports = pulse;
 						})
 					}
 					catch (e) {
-						console.log((new Date).toLocaleString() + ' No other devices found');
+						console.log((new Date()).toLocaleString() + 'Pulse.getDeviceStatus No other devices found');
 					}
 				})
 			}
@@ -220,7 +226,7 @@ module.exports = pulse;
 	},
 
 	this.deviceStateChange = function (device) {
-		console.log((new Date).toLocaleString() + ' Pulse: Device State Change', device.name, device.state);
+		console.log((new Date()).toLocaleString() + ' Pulse.deviceStateChange: Device State Change', device.name, device.state);
 
 		var deferred = q.defer();
 
@@ -241,25 +247,24 @@ module.exports = pulse;
 			},
 			function(err, request, body){
 				if(err){
-					console.log((new Date).toLocaleString() + ' Pulse: Device State Failure');
+					console.log((new Date()).toLocaleString() + ' Pulse: Device State Failure');
 					deferred.reject()
 				} else {
-					console.log((new Date).toLocaleString() + ' Pulse: Device State Success');
+					console.log((new Date()).toLocaleString() + ' Pulse: Device State Success');
 					deferred.resolve();
 				}
 			}
 		);
 
 		return deferred.promise;
-	}
+	},
 
 	this.getAlarmStatus = function () {
-		console.log((new Date).toLocaleString() + ' Pulse: Getting Alarm Statuses');
+		console.log((new Date()).toLocaleString() + ' Pulse.getAlarmStatus: Getting Alarm Statuses');
 		var deferred = q.defer();
 
 		request(
 			{
-				//url: this.config.orbUrl,
 				url: this.config.summaryUrl,
 				jar: j,
 				headers: {
@@ -268,50 +273,17 @@ module.exports = pulse;
 			},
 			function(err, httpResponse, body) {
 
-				var actions = [];
-
 				//get the sat code
 				try{
 					sat = body.match(/sat.+value=\"(.+)\"/)[1];
 				}
 				catch (e){
-					console.log((new Date).toLocaleString() + ' error getting sat ::'+ body + '::');
+					console.log((new Date()).toLocaleString() + ' Pulse: error getting sat ::'+ body + '::');
 				}
 
 				//parse the html
 				$ = cheerio.load(body);
-
-				//grab the action buttons
-				$('#divOrbSecurityButtons input').each(function(el){
-
-					//get the args from the onclick
-					var matches = $(this).attr('onclick').match(/'([^']*)'/g);
-
-					//remove the singl quotes
-					matches.forEach(function(obj, index, arr){
-						arr[index] = obj.replace(/'/gi,'');
-					});
-
-					//populate the values
-					var values = {
-						instance: matches[0],
-						newstate:matches[1],
-						units: matches[2]
-					}
-
-					//push the action
-					actions.push({
-						label: $(this).val(),
-						values: values
-					})
-				})
-
-				statusUpdateCB({
-					status: $('#divOrbTextSummary span').text(),
-					actions: actions
-				})
-
-
+				statusUpdateCB({ status: $('#divOrbTextSummary span').text()});
 				deferred.resolve();
 			}
 		);
@@ -320,13 +292,33 @@ module.exports = pulse;
 
 	},
 
-
-
 	this.setAlarmState = function (action) {
+		// action can be: stay, away, disarm
+		// action.newstate
+		// action.prev_state
+
+		console.log((new Date()).toLocaleString() + ' Pulse.setAlarmState Setting Alarm Status');
 
 		var deferred = q.defer();
+		var that = this;
+		var url,ref;
 
-		var url = this.config.statusChangeUrl+'?rtn=xml&fi='+encodeURIComponent(action.instance)+'&vn=arm-state&u='+encodeURIComponent(action.units)+'&ft=security-panel&sat=' + sat + '&value=' + encodeURIComponent(action.newstate);
+		ref = 'https://portal.adtpulse.com/myhome/9.7.0-31/summary/summary.jsp';
+
+		if (action.newstate!='disarm'){
+			if(action.isForced==true){
+				url= this.config.armUrl+'?sat=' + sat + '&href=rest/adt/ui/client/security/setForceArm&armstate=forcearm&arm=' + encodeURIComponent(action.newstate);
+				ref= this.config.disarmUrl+'&armstate='+ action.prev_state +"&arm="+action.newstate;
+			}
+				else{
+					url= this.config.disarmUrl+'&armstate='+ action.prev_state +"&arm="+action.newstate;
+				}
+		}
+		else{ // disarm
+			url= this.config.disarmUrl+'&armstate='+ action.prev_state +"&arm=off";
+		}
+
+		console.log((new Date()).toLocaleString() + ' Pulse.setAlarmState calling: '+url + " ref:"+ref);
 
 		request(
 			{
@@ -334,34 +326,43 @@ module.exports = pulse;
 				jar: j,
 				headers: {
 					'User-Agent': ua,
-					'Referer': 'https://portal.adtpulse.com/myhome/9.7.0-31/summary/summary.jsp'
+					'Referer': ref
 				},
 			},
 			function(err, httpResponse, body) {
 				if(err){
-					onsole.log((new Date).toLocaleString() + ' Pulse setAlarmState Failed');
-					deferred.reject()
+					console.log((new Date()).toLocaleString() + ' Pulse setAlarmState Failed::'+ body + "::");
+					deferred.reject();
 				} else {
-					console.log((new Date).toLocaleString() + ' Pulse setAlarmState Success');
-					console.log((new Date).toLocaleString() + body);
+					// check if Some sensors are open or reporting motion
+					// need the new sat value;
+					if (action.isForced!=true && body.includes("Some sensors are open or reporting motion")){
+						console.log((new Date()).toLocaleString() + ' Pulse setAlarmState Force ::'+ body + "::");
+						sat = body.match(/sat\=(.+)\&href/)[1];
+						console.log((new Date()).toLocaleString() + ' Pulse setAlarmState New SAT ::'+ sat + "::");
+						action.isForced=true;
+						that.setAlarmState(action);
+
+					}
+					console.log((new Date()).toLocaleString() + ' Pulse setAlarmState Success::'+ body + "::");
 					deferred.resolve(body);
 				}
 
 			}
 		);
 
-		console.log((new Date).toLocaleString() + action);
-
 		return deferred.promise;
 
 	}
 
 	this.pulse = function(uid) {
+		console.log((new Date()).toLocaleString() + ' Pulse.pulse Spanning');
+
 		if(this.clients.indexOf(uid) >= 0){
-			console.log((new Date).toLocaleString() + ' Pulse: Client Lost', uid);
+			console.log((new Date()).toLocaleString() + ' Pulse: Client Lost', uid);
 			this.clients.splice(this.clients.indexOf(uid),1)
 		} else {
-			console.log((new Date).toLocaleString() + ' Pulse: New Client', uid);
+			console.log((new Date()).toLocaleString() + ' Pulse: New Client', uid);
 			this.clients.push(uid);
 			this.sync();
 		}
@@ -381,10 +382,10 @@ module.exports = pulse;
 						'Referer': 'https://portal.adtpulse.com/myhome/9.7.0-31/summary/summary.jsp'
 					},
 				},function(err, response, body){
-					console.log((new Date).toLocaleString() + ' Pulse: Syncing', body);
+					console.log((new Date()).toLocaleString() + ' Pulse.Sync: Syncing', body);
 					if(err || !body || body.indexOf("<html") > -1){
 						that.authenticated = false;
-						console.log((new Date).toLocaleString() + ' Pulse: Sync Failed');
+						console.log((new Date()).toLocaleString() + ' Pulse.Sync: Sync Failed');
 					} else if (lastsynckey != body|| "1-0-0" == body) {
 					 	lastsynckey = body;
 					 	that.updateAll.call(that);

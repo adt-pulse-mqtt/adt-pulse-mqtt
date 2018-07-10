@@ -11,11 +11,41 @@ var zone_state_topic = config.zone_state_topic;
 var alarm_last_state = "unknown";
 var devices = {};
 
+client.on('connect', function () {
+  console.log("MQTT Sub to: "+alarm_command_topic);
+  client.subscribe(alarm_command_topic)
+});
+
+client.on('message', function (topic, message) {
+  console.log("Received Message" + topic + ":"+message);
+  if (topic!=alarm_command_topic){
+    return;
+  }
+
+  var msg = message.toString();
+  var action;
+  var prev_state="disarmed";
+
+  //changing states when the alarm is on, is not tested.
+  if(alarm_last_state=="armed_home") prev_state = "stay";
+  if(alarm_last_state=="armed_away") prev_state = "away";
+
+  if (msg =="arm_home"){
+      action= {'newstate':'stay','prev_state':prev_state};
+  }
+  else if (msg ="disarm") {
+     action= {'newstate':'disarm','prev_state':prev_state};
+  }
+  else if (msg ="arm_away") {
+    actio = {'newstate':'away','prev_state':prev_state};
+  }
+  myAlarm.setAlarmState(action);
+});
 
 // Register Callbacks:
 myAlarm.onDeviceUpdate(
     function(device) {
-        console.log(device);
+      console.log("Device callback"+ JSON.stringify(device));
     }
 );
 
