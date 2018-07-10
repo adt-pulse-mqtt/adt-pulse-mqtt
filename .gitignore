@@ -58,3 +58,4 @@ typings/
 .env
 
 adt-pulse-mqtt/package-lock.json
+package-lock.json
