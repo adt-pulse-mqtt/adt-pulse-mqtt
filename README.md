@@ -8,8 +8,8 @@ Change the config of the app in hassio then edit the configuration.yaml:
 <pre>alarm_control_panel:
   - platform: mqtt
     name: "ADT Pulse"
-    state_topic: "adt/alarm/state"
-    command_topic: "adt/alarm/cmd"
+    state_topic: "home/alarm/state"
+    command_topic: "home/alarm/cmd"
     payload_arm_home: "arm_home"
     payload_arm_away: "arm_away"
     payload_disarm: "disarm"
