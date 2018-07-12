@@ -19,7 +19,7 @@ To add the control panel:
 
 After running the add-on, to list all the zones found, you can call:
 <pre>
-# mosquitto_sub -h <YOUR_MQTT_IP>-v -t "adt/zone/#"
+# mosquitto_sub -h YOUR_MQTT_IP -v -t "adt/zone/#"
 </pre>
 
 Add the following to the configuration.yaml for each zone:
