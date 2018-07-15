@@ -8,7 +8,7 @@ var alarm_state_topic = config.options.alarm_state_topic;
 var alarm_command_topic = config.options.alarm_command_topic;
 var zone_state_topic = config.options.zone_state_topic;
 var smartthings_topic = config.options.smartthings_topic;
-var smartthings = config.options.smartthing;
+var smartthings = config.options.smartthings;
 
 var alarm_last_state = "unknown";
 var devices = {};
