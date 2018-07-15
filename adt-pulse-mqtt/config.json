@@ -30,7 +30,9 @@
       },
       "alarm_state_topic": "home/alarm/state",
       "alarm_command_topic": "home/alarm/cmd",
-      "zone_state_topic": "adt/zone"
+      "zone_state_topic": "adt/zone",
+      "smartthings_topic": "smartthings",
+      "smartthing": false
     },
     "schema": {
       "ssl": "bool",
@@ -47,6 +49,8 @@
       },
       "alarm_state_topic" : "str",
       "alarm_command_topic": "str",
-      "zone_state_topic": "str"
+      "zone_state_topic": "str",
+      "smartthings_topic": "str",
+      "smartthing": "bool"
     }
 }

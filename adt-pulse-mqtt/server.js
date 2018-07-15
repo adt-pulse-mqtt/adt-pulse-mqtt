@@ -2,11 +2,13 @@ const Pulse = require('./adt-pulse.js');
 const mqtt = require('mqtt');
 var config = require('/data/options.json');
 
-var myAlarm = new Pulse(config.pulse_login.username, config.pulse_login.password);
-var client = new mqtt.connect("mqtt://"+config.mqtt_host,config.mqtt_connect_options);
-var alarm_state_topic = config.alarm_state_topic;
-var alarm_command_topic = config.alarm_command_topic;
-var zone_state_topic = config.zone_state_topic;
+var myAlarm = new Pulse(config.options.pulse_login.username, config.options.pulse_login.password);
+var client = new mqtt.connect("mqtt://"+config.options.mqtt_host,config.options.mqtt_connect_options);
+var alarm_state_topic = config.options.alarm_state_topic;
+var alarm_command_topic = config.options.alarm_command_topic;
+var zone_state_topic = config.options.zone_state_topic;
+var smartthings_topic = config.options.smartthings_topic;
+var smartthings = config.options.smartthing;
 
 var alarm_last_state = "unknown";
 var devices = {};
@@ -45,62 +47,91 @@ client.on('message', function (topic, message) {
 // Register Callbacks:
 myAlarm.onDeviceUpdate(
     function(device) {
-      console.log("Device callback"+ JSON.stringify(device));
+        console.log("Device callback"+ JSON.stringify(device));
     }
 );
 
 myAlarm.onStatusUpdate(
   function(device) {
       var mqtt_state = "unknown";
+      var sm_alarm_value = "off";
+
       var status = device.status.toLowerCase();
+
+      // smartthings bridge has no typical alarm decice with stay|away|alarm|home status.
+      // we'll re-use the "alarm" and map strobe|siren|both|off to stay|away|alarm|home
+      // Sorry I'm too lazy to write my own smartthngs bridge for now.
 
       if (status.includes('disarmed')) {
           mqtt_state = "disarmed";
+          sm_alarm_value = "off";
       }
       if (status.includes('armed stay')) {
           mqtt_state = "armed_home";
+          sm_alarm_value = "strobe";
       }
       if (status.includes('armed away')) {
           mqtt_state = "armed_away";
+          sm_alarm_value = "siren";
       }
       if (status.includes('alarm')) {
           mqtt_state = "triggered";
+          sm_alarm_value = "both";
       }
       if (status.includes('arming')) {
           mqtt_state = "pending";
+          sm_alarm_value = "siren"; // temporary
       }
 
       if (!mqtt_state.includes(alarm_last_state) && !mqtt_state.includes('unknown')) {
          console.log((new Date()).toLocaleString()+": Pushing alarm state: "+mqtt_state+" to "+alarm_state_topic);
-         client.publish(alarm_state_topic, mqtt_state,{"retain":"true"});
-         alarm_last_state = mqtt_state;
+         client.publish(alarm_state_topic, mqtt_state,{"retain":true});
+         if (smartthings){
+           var sm_alarm_topic = smartthings_topic+"/ADT Alarm System/alarm/cmd";
+           console.log((new Date()).toLocaleString()+": Pushing alarm state to smartthings"+sm_alarm_topic);
+           client.publish(sm_alarm_topic, sm_alarm_value,{"retain":false});
+         }
+		  alarm_last_state = mqtt_state;
       }
   }
-)
+);
 
 myAlarm.onZoneUpdate(
   function(device) {
-    if (devices[device.id]==null){
-        console.log ((new Date()).toLocaleString()+" New device: "+ device.id);
+
+    var dev_zone_state_topic = zone_state_topic+"/"+device.name+"/state";
+    var devValue = JSON.stringify(device);
+    var sm_dev_zone_state_topic;
+
+    // smartthings bridge assumes actionable devices have a topic set with cmd
+    // adt/zone/DEVICE_NAME/state needs to turn Macintosh
+    // smartthings/DEVICE_NAME/door/cmd
+    // or
+    // smartthings/DEVICE_NAME/motion/cmd
+
+    if (smartthings){
+      var contactType = "door";
+      var contactValue= (device.status == "devStatOK")? "closed":"open";
+
+      if (device.tags.includes("motion")) {
+        contactType="motion";
+        contactValue = (device.status == "devStatOK")? "inactive":"active";
+      }
+       sm_dev_zone_state_topic=smartthings_topic+"/"+device.name+"/"+contactType+"/cmd";
     }
 
-    dev_zone_state_topic = zone_state_topic+"/"+device.name+"/state";
-
     if (devices[device.id]==null || device.activityTs!=devices[device.id].activityTs){
-        console.log((new Date()).toLocaleString()+": Zone state: receieved '"+ device.id + "' will push to "+ dev_zone_state_topic+" "+ JSON.stringify(device));
-        client.publish(dev_zone_state_topic, JSON.stringify(device),{"retain":"true"});
+        client.publish(dev_zone_state_topic, devValue, {"retain":false});
+        console.log((new Date()).toLocaleString()+": Pushing  "+dev_zone_state_topic+" to "+devValue);
+
+        if (smartthings){
+          client.publish(sm_dev_zone_state_topic, contactValue, {"retain":false});
+          console.log((new Date()).toLocaleString()+": Pushing to smartthings: "+sm_dev_zone_state_topic+" to "+contactValue);
+        }
 	  }
-      else{
-        console.log((new Date()).toLocaleString()+" Zone "+device.id+ " din't change. Skipping");
-      }
       devices[device.id] = device;
   }
-)
+);
 
-client.on('connect', () => {
-  console.log((new Date()).toLocaleString()+': Connected successfully to mqtt');
-})
 
-// Login - gets all devices, zones and status and invokes callbacks:
-// myAlarm.login();
 myAlarm.pulse();
