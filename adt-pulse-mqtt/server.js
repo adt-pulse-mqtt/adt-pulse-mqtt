@@ -2,13 +2,14 @@ const Pulse = require('./adt-pulse.js');
 const mqtt = require('mqtt');
 var config = require('/data/options.json');
 
-var myAlarm = new Pulse(config.options.pulse_login.username, config.options.pulse_login.password);
-var client = new mqtt.connect("mqtt://"+config.options.mqtt_host,config.options.mqtt_connect_options);
-var alarm_state_topic = config.options.alarm_state_topic;
-var alarm_command_topic = config.options.alarm_command_topic;
-var zone_state_topic = config.options.zone_state_topic;
-var smartthings_topic = config.options.smartthings_topic;
-var smartthings = config.options.smartthings;
+var myAlarm = new Pulse(config.pulse_login.username, config.pulse_login.password);
+
+var client = new mqtt.connect("mqtt://"+config.mqtt_host,config.mqtt_connect_options);
+var alarm_state_topic = config.alarm_state_topic;
+var alarm_command_topic = config.alarm_command_topic;
+var zone_state_topic = config.zone_state_topic;
+var smartthings_topic = config.smartthings_topic;
+var smartthings = config.smartthings;
 
 var alarm_last_state = "unknown";
 var devices = {};
