@@ -278,7 +278,9 @@ module.exports = pulse;
 					sat = body.match(/sat.+value=\"(.+)\"/)[1];
 				}
 				catch (e){
-					console.log((new Date()).toLocaleString() + ' Pulse: error getting sat ::'+ body + '::');
+					console.log((new Date()).toLocaleString() + ' Pulse: error getting sat ::'+ body + '::'+ e);
+					deferred.reject();
+					return false;
 				}
 
 				//parse the html
