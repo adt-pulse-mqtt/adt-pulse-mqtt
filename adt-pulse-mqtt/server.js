@@ -36,10 +36,10 @@ client.on('message', function (topic, message) {
   if (msg =="arm_home"){
       action= {'newstate':'stay','prev_state':prev_state};
   }
-  else if (msg ="disarm") {
+  else if (msg =="disarm") {
      action= {'newstate':'disarm','prev_state':prev_state};
   }
-  else if (msg ="arm_away") { //corrected mis-spelling of action variable
+  else if (msg =="arm_away") {
     action= {'newstate':'away','prev_state':prev_state};
   }
   myAlarm.setAlarmState(action);
