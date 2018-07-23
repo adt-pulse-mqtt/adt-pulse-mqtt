@@ -56,11 +56,11 @@ return result
 }
 
 def open(){
-	  parse("open")
+	parse("open")
     sendEvent(name:"contact", value:"open")
 }
 
 def close(){
-		parse("closed")
+	parse("closed")
     sendEvent(name:"contact", value:"closed")
 }
