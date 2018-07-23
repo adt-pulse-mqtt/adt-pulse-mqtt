@@ -62,7 +62,7 @@ https://github.com/haruny/adt-pulse-mqtt/tree/master/devicetypes/haruny/VirtualA
 https://github.com/haruny/adt-pulse-mqtt/tree/master/smartapps/haruny/ADTAlarmSmartApp.src
 1. Add your devices using SmartThings IDE. You have to name them the same way they appear in ADT Portal.
 1. Run the SmartApp in your mobile application. Follow the instructions. Do not rename ADT Alarm System device created by the app. Multiple alarm systems/locations is not supported.
-1. In MQTT Bridge app, elect all the devices created (Alarm system, contacts, motion etc.)
+1. In MQTT Bridge app, select all the devices created (Alarm system, contacts, motion etc.)
 
 
 
