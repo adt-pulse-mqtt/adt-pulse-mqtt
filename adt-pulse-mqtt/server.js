@@ -39,8 +39,8 @@ client.on('message', function (topic, message) {
   else if (msg ="disarm") {
      action= {'newstate':'disarm','prev_state':prev_state};
   }
-  else if (msg ="arm_away") {
-    actio = {'newstate':'away','prev_state':prev_state};
+  else if (msg ="arm_away") { //corrected mis-spelling of action variable
+    action= {'newstate':'away','prev_state':prev_state};
   }
   myAlarm.setAlarmState(action);
 });
