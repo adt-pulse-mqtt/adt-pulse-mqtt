@@ -20,7 +20,8 @@ client.on('connect', function () {
 });
 
 client.on('message', function (topic, message) {
-  console.log("Received Message" + topic + ":"+message);
+  console.log((new Date()).toLocaleString()+" Received Message:"+ topic + ":"+message);
+
   if (topic!=alarm_command_topic){
     return;
   }
@@ -29,19 +30,22 @@ client.on('message', function (topic, message) {
   var action;
   var prev_state="disarmed";
 
-  //changing states when the alarm is on, is not tested.
   if(alarm_last_state=="armed_home") prev_state = "stay";
   if(alarm_last_state=="armed_away") prev_state = "away";
 
   if (msg =="arm_home"){
       action= {'newstate':'stay','prev_state':prev_state};
   }
-  else if (msg =="disarm") {
+  else if (msg=="disarm") {
      action= {'newstate':'disarm','prev_state':prev_state};
   }
-  else if (msg =="arm_away") {
-    action= {'newstate':'away','prev_state':prev_state};
+  else if (msg=="arm_away") {
+    action = {'newstate':'away','prev_state':prev_state};
+  }  else{ // I don't know this mode #5
+      console.log((new Date()).toLocaleString()+" Unsupportated state requested:"+msg);
+      return;
   }
+
   myAlarm.setAlarmState(action);
 });
 
