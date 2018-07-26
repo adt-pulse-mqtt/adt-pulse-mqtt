@@ -275,7 +275,7 @@ module.exports = pulse;
 
 				//get the sat code
 				try{
-					sat = body.match(/sat.+value=\"(.+)\"/)[1];
+					sat = body.match(/sat.+value=\"(.+?)\"/)[1];
 				}
 				catch (e){
 					console.log((new Date()).toLocaleString() + ' Pulse: error getting sat ::'+ body + '::'+ e);
@@ -308,6 +308,7 @@ module.exports = pulse;
 		ref = 'https://portal.adtpulse.com/myhome/9.7.0-31/summary/summary.jsp';
 
 		if (action.newstate!='disarm'){
+			// we are arming.
 			if(action.isForced==true){
 				url= this.config.armUrl+'?sat=' + sat + '&href=rest/adt/ui/client/security/setForceArm&armstate=forcearm&arm=' + encodeURIComponent(action.newstate);
 				ref= this.config.disarmUrl+'&armstate='+ action.prev_state +"&arm="+action.newstate;
@@ -320,7 +321,7 @@ module.exports = pulse;
 			url= this.config.disarmUrl+'&armstate='+ action.prev_state +"&arm=off";
 		}
 
-		console.log((new Date()).toLocaleString() + ' Pulse.setAlarmState calling: '+url + " ref:"+ref);
+		console.log((new Date()).toLocaleString() + ' Pulse.setAlarmState calling the urls');
 
 		request(
 			{
@@ -339,14 +340,23 @@ module.exports = pulse;
 					// check if Some sensors are open or reporting motion
 					// need the new sat value;
 					if (action.isForced!=true && body.includes("Some sensors are open or reporting motion")){
-						console.log((new Date()).toLocaleString() + ' Pulse setAlarmState Force ::'+ body + "::");
-						sat = body.match(/sat\=(.+)\&href/)[1];
+						console.log((new Date()).toLocaleString() + ' Pulse setAlarmState Some sensors are open. will force the alarm state');
+
+						sat = body.match(/sat\=(.+?)&href/)[1];
 						console.log((new Date()).toLocaleString() + ' Pulse setAlarmState New SAT ::'+ sat + "::");
 						action.isForced=true;
 						that.setAlarmState(action);
+						deferred.resolve(body);
+					}
+					else{
+							// we failed.
+							if(!action.isForced){
+									console.log((new Date()).toLocaleString() + ' Pulse setAlarmState Forced alarm state failed::'+ body + "::");
+									deferred.reject();
+							}
 
 					}
-					console.log((new Date()).toLocaleString() + ' Pulse setAlarmState Success::'+ body + "::");
+					console.log((new Date()).toLocaleString() + ' Pulse setAlarmState Success. Forced?:'+ action.isForced);
 					deferred.resolve(body);
 				}
 
