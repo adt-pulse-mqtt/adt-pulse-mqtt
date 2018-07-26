@@ -337,9 +337,9 @@ module.exports = pulse;
 					console.log((new Date()).toLocaleString() + ' Pulse setAlarmState Failed::'+ body + "::");
 					deferred.reject();
 				} else {
-					// check if Some sensors are open or reporting motion
+					// when arming check if Some sensors are open or reporting motion
 					// need the new sat value;
-					if (action.isForced!=true && body.includes("Some sensors are open or reporting motion")){
+					if (action.newstate!="disarm" && action.isForced!=true && body.includes("Some sensors are open or reporting motion")){
 						console.log((new Date()).toLocaleString() + ' Pulse setAlarmState Some sensors are open. will force the alarm state');
 
 						sat = body.match(/sat\=(.+?)&href/)[1];
@@ -349,12 +349,12 @@ module.exports = pulse;
 						deferred.resolve(body);
 					}
 					else{
-							// we failed.
-							if(!action.isForced){
+							// we failed?
+							// Arming Disarming states are captured. No need to call them failed.
+							if(!action.isForced && !body.includes("Disarming") && !body.includes("Arming")){
 									console.log((new Date()).toLocaleString() + ' Pulse setAlarmState Forced alarm state failed::'+ body + "::");
 									deferred.reject();
 							}
-
 					}
 					console.log((new Date()).toLocaleString() + ' Pulse setAlarmState Success. Forced?:'+ action.isForced);
 					deferred.resolve(body);
