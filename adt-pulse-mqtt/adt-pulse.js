@@ -290,7 +290,13 @@ module.exports = pulse;
 
 				//get the sat code
 				try{
-					sat = body.match(/sat.+value=\"(.+?)\"/)[1];
+					// looks like some folks have the sat value displayed differently.
+					if (body.includes("setShiftState")){
+					  sat = body.match(/sat\=(.+?)\'/)[1];
+					}
+					else{
+					  sat = body.match(/sat.+value=\"(.+?)\"/)[1];
+					}
 				}
 				catch (e){
 					console.log((new Date()).toLocaleString() + ' Pulse: error getting sat ::'+ body + '::'+ e);
