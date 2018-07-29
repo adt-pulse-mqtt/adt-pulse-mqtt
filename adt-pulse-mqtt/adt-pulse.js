@@ -37,17 +37,21 @@ module.exports = pulse;
 (function() {
 
 	this.config = {
-		initialurl: 'https://portal.adtpulse.com/myhome/9.7.0-31/access/signin.jsp',
-		authUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/access/signin.jsp?e=n&e=n&&partner=adt',
-		sensorUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/ajax/homeViewDevAjax.jsp',
-		orbUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/ajax/orb.jsp',
-		summaryUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/summary/summary.jsp',
-		statusChangeUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/quickcontrol/serv/ChangeVariableServ',
-		armUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/quickcontrol/serv/RunRRACommand',
-		disarmUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/quickcontrol/armDisarmRRA.jsp?href=rest/adt/ui/client/security/setArmState',
-		otherStatusUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/ajax/currentStates.jsp',
-		syncUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/Ajax/SyncCheckServ',
-		logoutUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/access/signout.jsp'
+		baseUrl: 'https://portal.adtpulse.com',
+		prefix: '/myhome/10.0.0-60',
+		initialURI: '/',
+		signinURI: '/access/signin.jsp',
+		authURI: '/access/signin.jsp?e=n&e=n&&partner=adt',
+		sensorURI: '/ajax/homeViewDevAjax.jsp',
+		summaryURI: '/summary/summary.jsp',
+		statusChangeURI: '/quickcontrol/serv/ChangeVariableServ',
+		armURI: '/quickcontrol/serv/RunRRACommand',
+		disarmURI: '/quickcontrol/armDisarmRRA.jsp?href=rest/adt/ui/client/security/setArmState',
+		otherStatusURI: '/ajax/currentStates.jsp',
+		syncURI: '/Ajax/SyncCheckServ',
+		logoutURI: '/access/signout.jsp',
+
+		orbUrl: 'https://portal.adtpulse.com/myhome/9.7.0-31/ajax/orb.jsp' // not used
 	};
 
 	this.configure = function(options) {
@@ -71,15 +75,24 @@ module.exports = pulse;
 			that.isAuthenticating = true;
 			request(
 				{
-					url: this.config.initialurl,
+//					url: this.config.initialurl,
+					url: this.config.baseUrl+this.config.initialURI, // call with no prefix to grab the prefix
 					jar: j,
 					headers: {
 						'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
 						'User-Agent': ua
 					},
 				},
-				function() {
-					request.post(that.config.authUrl,
+				function(e, hResp, b) {
+					// expecting /myhome/VERSION/access/signin.jsp
+					console.log((new Date()).toLocaleString() + ' Pulse: Authentication Received Pathname: '+hResp.request.uri.pathname);
+
+					var uriPart = hResp.request.uri.pathname.match(/\/myhome\/(.+?)\/access/)[1];
+					console.log((new Date()).toLocaleString() + ' Pulse: Authentication Page Version: '+uriPart);
+					that.config.prefix= '/myhome/'+uriPart;
+					console.log((new Date()).toLocaleString() + ' Pulse: Authentication New URL Prefix '+ that.config.prefix);
+					console.log((new Date()).toLocaleString() + ' Pulse: Authentication  Calling '+ that.config.baseUrl+that.config.prefix+that.config.authURI);
+					request.post(that.config.baseUrl+that.config.prefix+that.config.authURI,
 						{
 							followAllRedirects: true,
 							jar: j,
@@ -94,7 +107,7 @@ module.exports = pulse;
 						},
 						function(err, httpResponse, body){
 							that.isAuthenticating = false;
-							if(err || httpResponse.req.path !== '/myhome/9.7.0-31/summary/summary.jsp'){
+							if(err || httpResponse.request.path !== that.config.prefix+that.config.summaryURI){
 								that.authenticated = false;
 								console.log((new Date()).toLocaleString() + ' Pulse: Authentication Failed');
 								console.log((new Date()).toLocaleString() + ' Pulse: httpResponse:' + httpResponse);
@@ -108,6 +121,8 @@ module.exports = pulse;
 							}
 						}
 					);
+
+
 				}
 			);
 		}
@@ -125,7 +140,7 @@ module.exports = pulse;
 
 		request(
 			{
-				url: this.config.logoutUrl,
+				url: this.config.baseUrl+this.config.prefix+this.config.logoutURI,
 				jar: j,
 				headers: {
 					'User-Agent': ua
@@ -154,7 +169,7 @@ module.exports = pulse;
 
 		request(
 			{
-				url: this.config.sensorUrl,
+				url: this.config.baseUrl+this.config.prefix+this.config.sensorURI,
 				jar: j,
 				headers: {
 					'User-Agent': ua
@@ -186,12 +201,12 @@ module.exports = pulse;
 		return deferred.promise;
 	},
 
-	this.getDeviceStatus = function() {
+	this.getDeviceStatus = function() { // not tested
 		console.log((new Date()).toLocaleString() + ' Pulse.getDeviceStatus: Getting Device Statuses');
 
 		request(
 			{
-				url: this.config.otherStatusUrl,
+				url: this.config.baseUrl+this.config.prefix+this.config.otherStatusURI,
 				jar: j,
 				headers: {
 					'User-Agent': ua
@@ -208,7 +223,7 @@ module.exports = pulse;
 						})
 					}
 					catch (e) {
-						console.log((new Date()).toLocaleString() + 'Pulse.getDeviceStatus No other devices found');
+						console.log((new Date()).toLocaleString() + ' Pulse.getDeviceStatus No other devices found');
 					}
 				})
 			}
@@ -230,7 +245,7 @@ module.exports = pulse;
 
 		var deferred = q.defer();
 
-		request.post(this.config.statusChangeUrl + '?fi='+device.serialnumber+'&vn=level&u=On|Off&ft=light-onoff',
+		request.post(this.config.baseUrl+this.config.prefix+this.config.statusChangeURI + '?fi='+device.serialnumber+'&vn=level&u=On|Off&ft=light-onoff',
 
 			{
 				followAllRedirects: true,
@@ -238,7 +253,7 @@ module.exports = pulse;
 				headers: {
 					'Host': 'portal.adtpulse.com',
 					'User-Agent': ua,
-					'Referer': this.config.summaryUrl
+					'Referer': this.config.baseUrl+this.config.prefix+this.config.summaryURI
 				},
 				form:{
 					sat: sat,
@@ -265,7 +280,7 @@ module.exports = pulse;
 
 		request(
 			{
-				url: this.config.summaryUrl,
+				url: this.config.baseUrl+this.config.prefix+this.config.summaryURI,
 				jar: j,
 				headers: {
 					'User-Agent': ua
@@ -305,20 +320,20 @@ module.exports = pulse;
 		var that = this;
 		var url,ref;
 
-		ref = 'https://portal.adtpulse.com/myhome/9.7.0-31/summary/summary.jsp';
+		ref = this.config.baseUrl+this.config.prefix+this.config.summaryURI;
 
 		if (action.newstate!='disarm'){
 			// we are arming.
 			if(action.isForced==true){
-				url= this.config.armUrl+'?sat=' + sat + '&href=rest/adt/ui/client/security/setForceArm&armstate=forcearm&arm=' + encodeURIComponent(action.newstate);
-				ref= this.config.disarmUrl+'&armstate='+ action.prev_state +"&arm="+action.newstate;
+				url= this.config.baseUrl+this.config.prefix+this.config.armURI+'?sat=' + sat + '&href=rest/adt/ui/client/security/setForceArm&armstate=forcearm&arm=' + encodeURIComponent(action.newstate);
+				ref= this.config.baseUrl+this.config.prefix+this.config.disarmURI+'&armstate='+ action.prev_state +"&arm="+action.newstate;
 			}
 				else{
-					url= this.config.disarmUrl+'&armstate='+ action.prev_state +"&arm="+action.newstate;
+					url= this.config.baseUrl+this.config.prefix+this.config.disarmURI+'&armstate='+ action.prev_state +"&arm="+action.newstate;
 				}
 		}
 		else{ // disarm
-			url= this.config.disarmUrl+'&armstate='+ action.prev_state +"&arm=off";
+			url= this.config.baseUrl+this.config.prefix+this.config.disarmURI+'&armstate='+ action.prev_state +"&arm=off";
 		}
 
 		console.log((new Date()).toLocaleString() + ' Pulse.setAlarmState calling the urls');
@@ -386,12 +401,12 @@ module.exports = pulse;
 			var that = this;
 			this.login().then(function(){
 				request({
-					url: that.config.syncUrl,
+					url: that.config.baseUrl+that.config.prefix+that.config.syncURI,
 					jar: j,
 					followAllRedirects: true,
 					headers: {
 						'User-Agent': ua,
-						'Referer': 'https://portal.adtpulse.com/myhome/9.7.0-31/summary/summary.jsp'
+						'Referer': that.config.baseUrl+that.config.prefix+that.config.summaryURI
 					},
 				},function(err, response, body){
 					console.log((new Date()).toLocaleString() + ' Pulse.Sync: Syncing', body);
