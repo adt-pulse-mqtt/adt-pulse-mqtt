@@ -239,7 +239,7 @@ module.exports = pulse;
 	this.onStatusUpdate = function (updateCallback) {
 		statusUpdateCB = updateCallback;
 	},
-
+  // not tested
 	this.deviceStateChange = function (device) {
 		console.log((new Date()).toLocaleString() + ' Pulse.deviceStateChange: Device State Change', device.name, device.state);
 
@@ -288,9 +288,16 @@ module.exports = pulse;
 			},
 			function(err, httpResponse, body) {
 
+				// signed in?
+				if (body.includes("You have not yet signed in")){
+					console.log((new Date()).toLocaleString() + ' Pulse: error getting sat login timedout');
+					deferred.reject();
+					return false;
+				}
 				//get the sat code
 				try{
 					// looks like some folks have the sat value displayed differently.
+
 					if (body.includes("setShiftState")){
 					  sat = body.match(/sat\=(.+?)\'/)[1];
 					}
@@ -301,6 +308,7 @@ module.exports = pulse;
 				catch (e){
 					console.log((new Date()).toLocaleString() + ' Pulse: error getting sat ::'+ body + '::'+ e);
 					deferred.reject();
+
 					return false;
 				}
 
