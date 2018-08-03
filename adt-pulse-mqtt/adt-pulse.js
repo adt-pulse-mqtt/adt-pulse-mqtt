@@ -213,19 +213,24 @@ module.exports = pulse;
 				},
 			},
 			function(err, httpResponse, body) {
-				$ = cheerio.load(body);
-				$('tr tr.p_listRow').each(function(el){
-					try {
-						deviceUpdateCB({
-							name: $(this).find('td').eq(2).text(),
-							serialnumber: $(this).find('td').eq(2).find('a').attr('href').split('\'')[1],
-							state: $(this).find('td').eq(3).text().trim().toLowerCase() == 'off' ? 0 : 1
-						})
-					}
-					catch (e) {
-						console.log((new Date()).toLocaleString() + ' Pulse.getDeviceStatus No other devices found');
-					}
-				})
+					try{
+					$ = cheerio.load(body);
+					$('tr tr.p_listRow').each(function(el){
+						try {
+							deviceUpdateCB({
+								name: $(this).find('td').eq(2).text(),
+								serialnumber: $(this).find('td').eq(2).find('a').attr('href').split('\'')[1],
+								state: $(this).find('td').eq(3).text().trim().toLowerCase() == 'off' ? 0 : 1
+							})
+						}
+						catch (e) {
+							console.log((new Date()).toLocaleString() + ' Pulse.getDeviceStatus No other devices found');
+						}
+					})
+				}
+				catch(e){
+					console.log((new Date()).toLocaleString() + ' Pulse.getDeviceStatus failed: ::'+body+"::");
+				}
 			}
 		);
 	},
@@ -308,14 +313,20 @@ module.exports = pulse;
 				catch (e){
 					console.log((new Date()).toLocaleString() + ' Pulse: error getting sat ::'+ body + '::'+ e);
 					deferred.reject();
-
 					return false;
 				}
 
 				//parse the html
-				$ = cheerio.load(body);
-				statusUpdateCB({ status: $('#divOrbTextSummary span').text()});
-				deferred.resolve();
+				try{
+					$ = cheerio.load(body);
+					statusUpdateCB({ status: $('#divOrbTextSummary span').text()});
+					deferred.resolve();
+				}
+				catch(e){
+						console.log((new Date()).toLocaleString() + ' Pulse: error getting sat cheerio ::'+ body + '::'+ e);
+						deferred.reject();
+						return false;
+				}
 			}
 		);
 
