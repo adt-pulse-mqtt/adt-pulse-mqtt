@@ -29,7 +29,7 @@ client.on('message', function (topic, message) {
 
       switch (message.toString()){
         case "off_push":
-          toState="disarmed";
+          toState="disarm";
           break;
         case "stay_push":
           toState="arm_home";
