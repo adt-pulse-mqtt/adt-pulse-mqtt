@@ -1,6 +1,7 @@
 /**
  *   Virtual ADT Alarm System
  *
+ *  v.0.0.2
  *  Copyright 2018 Harun Yayli
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -19,9 +20,12 @@ metadata {
 		capability "Alarm"
 		capability "Sensor"
 		capability "Actuator"
-        
+
         command "stay"
         command "away"
+        command "off_push"
+        command "stay_push"
+        command "away_push"
 	}
 
 	tiles(scale: 2) {
@@ -35,20 +39,20 @@ metadata {
 		}
 		// off
 		standardTile("off", "device.alarm", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
-            state "default", label:'Off', action:"alarm.off", icon:"st.security.alarm.off", background:"#ffffff", nextState:"pending"
-            state "pending", label:'Pending'                , icon:"st.security.alarm.off", nextState:"default"
+            state "default", label:'Off'   , action:"off_push"     , icon:"st.security.alarm.off", background:"#ffffff", nextState:"pending"
+            state "pending", label:'Pending', icon:"st.security.alarm.off", nextState:"default"
         }
 		// stay
         standardTile("strobe", "device.alarm", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
-           state "default", label:'Stay', action:"alarm.strobe", icon:"st.Home.home4", background:"#ffffff", nextState:"pending"
-           state "pending", label:'Pending'                     , icon:"st.Home.home4", nextState:"default"
+           state "default", label:'Stay'   , action:"stay_push", icon:"st.Home.home4", background:"#ffffff", nextState:"pending"
+           state "pending", label:'Pending', icon:"st.Home.home4", nextState:"default"
         }
 		//away
         standardTile("siren", "device.alarm", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
-            state "default", label:'Away', action:"alarm.siren", icon:"st.security.alarm.on", background:"#ffffff", nextState:"pending"
-            state "pending", label:'Pending'                   , icon:"st.security.alarm.on", nextState:"default"
+            state "default", label:'Away'  , action:"away_push", icon:"st.security.alarm.on", background:"#ffffff", nextState:"pending"
+            state "pending", label:'Pending', icon:"st.security.alarm.on", nextState:"default"
         }
-        
+
 		main "alarm"
         details(["alarm","off","strobe","siren"])
    }
@@ -66,6 +70,20 @@ def siren() {
 def both() {
 	alarmTriggered()
 }
+def stay_push(){
+    sendEvent(name: "alarm", value: "stay_push")
+    log.debug "Stay Push"
+}
+def away_push(){
+	sendEvent(name: "alarm", value: "away_push")
+   log.debug "Push Away"
+}
+def off_push() {
+   sendEvent(name: "alarm", value: "off_push")
+   log.debug "Push Off"
+}
+
+
 def stay(){
     sendEvent(name: "alarm", value: "stay")
     log.trace "Device Stay"

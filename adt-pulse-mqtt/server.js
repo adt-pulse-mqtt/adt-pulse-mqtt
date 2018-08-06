@@ -3,7 +3,6 @@ const mqtt = require('mqtt');
 var config = require('/data/options.json');
 
 var myAlarm = new Pulse(config.pulse_login.username, config.pulse_login.password);
-
 var client = new mqtt.connect("mqtt://"+config.mqtt_host,config.mqtt_connect_options);
 var alarm_state_topic = config.alarm_state_topic;
 var alarm_command_topic = config.alarm_command_topic;
@@ -17,11 +16,35 @@ var devices = {};
 client.on('connect', function () {
   console.log("MQTT Sub to: "+alarm_command_topic);
   client.subscribe(alarm_command_topic)
+  if (smartthings){
+      client.subscribe(smartthings_topic+"/ADT Alarm System/alarm/state")
+  }
 });
 
 client.on('message', function (topic, message) {
   console.log((new Date()).toLocaleString()+" Received Message:"+ topic + ":"+message);
 
+  if (smartthings && topic==smartthings_topic+"/ADT Alarm System/alarm/state" && message.toString().includes("_push")){
+      var toState=null;
+
+      switch (message.toString()){
+        case "off_push":
+          toState="disarmed";
+          break;
+        case "stay_push":
+          toState="arm_home";
+          break;
+        case "away_push":
+          toState="arm_away";
+          break;
+      }
+      console.log((new Date()).toLocaleString()+" Pushing alarm state to Hass:"+toState);
+
+      if (toState!=null){
+        client.publish(alarm_command_topic, toState,{"retain":false});
+      }
+      return;
+  }
   if (topic!=alarm_command_topic){
     return;
   }
