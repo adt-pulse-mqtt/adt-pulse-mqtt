@@ -85,6 +85,11 @@ module.exports = pulse;
 				},
 				function(e, hResp, b) {
 					// expecting /myhome/VERSION/access/signin.jsp
+					if (hResp.request==null){
+							console.log((new Date()).toLocaleString() + ' Pulse: Authentication bad response '+JSON.stringify(hResp));
+							deferred.reject();
+							return false;
+					}
 					console.log((new Date()).toLocaleString() + ' Pulse: Authentication Received Pathname: '+hResp.request.uri.pathname);
 
 					var uriPart = hResp.request.uri.pathname.match(/\/myhome\/(.+?)\/access/)[1];
@@ -111,7 +116,6 @@ module.exports = pulse;
 								that.authenticated = false;
 								console.log((new Date()).toLocaleString() + ' Pulse: Authentication Failed');
 								console.log((new Date()).toLocaleString() + ' Pulse: httpResponse:' + httpResponse);
-								//console.log((new Date).toLocaleString() + ' Pulse: body:'+body);
 								deferred.reject();
 							} else {
 								that.authenticated = true;

@@ -86,7 +86,7 @@ myAlarm.onStatusUpdate(
 
       var status = device.status.toLowerCase();
 
-      // smartthings bridge has no typical alarm decice with stay|away|alarm|home status.
+      // smartthings bridge has no typical alarm device with stay|away|alarm|home status.
       // we'll re-use the "alarm" and map strobe|siren|both|off to stay|away|alarm|home
       // Sorry I'm too lazy to write my own smartthngs bridge for now.
 
