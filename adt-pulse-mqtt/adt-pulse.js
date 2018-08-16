@@ -85,8 +85,8 @@ module.exports = pulse;
 				},
 				function(e, hResp, b) {
 					// expecting /myhome/VERSION/access/signin.jsp
-					if (hResp.request==null){
-							console.log((new Date()).toLocaleString() + ' Pulse: Authentication bad response '+JSON.stringify(hResp));
+					if (hResp==null){
+							console.log((new Date()).toLocaleString() + ' Pulse: Authentication bad response error:'+JSON.stringify(e));
 							deferred.reject();
 							return false;
 					}
