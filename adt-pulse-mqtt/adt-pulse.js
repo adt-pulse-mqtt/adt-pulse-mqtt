@@ -87,8 +87,9 @@ module.exports = pulse;
 					// expecting /myhome/VERSION/access/signin.jsp
 					if (hResp==null){
 							console.log((new Date()).toLocaleString() + ' Pulse: Authentication bad response error:'+JSON.stringify(e));
+							that.authenticated =false;
 							deferred.reject();
-							return false;
+							return deferred.promise;
 					}
 					console.log((new Date()).toLocaleString() + ' Pulse: Authentication Received Pathname: '+hResp.request.uri.pathname);
 
@@ -298,7 +299,7 @@ module.exports = pulse;
 			function(err, httpResponse, body) {
 
 				// signed in?
-				if (body.includes("You have not yet signed in")){
+				if (body==null || body.includes("You have not yet signed in")){
 					console.log((new Date()).toLocaleString() + ' Pulse: error getting sat login timedout');
 					deferred.reject();
 					return false;
