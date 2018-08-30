@@ -7,10 +7,7 @@ var cheerio = require('cheerio');
 
 //Cookie jar
 var j;
-
-//Request Configs
 var ua =  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36';
-
 var sat = '';
 var lastsynckey = '';
 var deviceUpdateCB = function () {};
@@ -75,7 +72,6 @@ module.exports = pulse;
 			that.isAuthenticating = true;
 			request(
 				{
-//					url: this.config.initialurl,
 					url: this.config.baseUrl+this.config.initialURI, // call with no prefix to grab the prefix
 					jar: j,
 					headers: {
@@ -88,6 +84,7 @@ module.exports = pulse;
 					if (hResp==null){
 							console.log((new Date()).toLocaleString() + ' Pulse: Authentication bad response error:'+JSON.stringify(e));
 							that.authenticated =false;
+							that.isAuthenticating = false;
 							deferred.reject();
 							return deferred.promise;
 					}
@@ -167,11 +164,9 @@ module.exports = pulse;
 		});
 	}
 
-
 	this.getZoneStatus = function() {
 		console.log((new Date()).toLocaleString() + ' Pulse.getZoneStatus: Getting Zone Statuses');
-		var deferred = q.defer()
-
+		var deferred = q.defer();
 		request(
 			{
 				url: this.config.baseUrl+this.config.prefix+this.config.sensorURI,
@@ -243,13 +238,16 @@ module.exports = pulse;
 	this.onDeviceUpdate = function (updateCallback) {
 		deviceUpdateCB = updateCallback;
 	},
+
 	this.onZoneUpdate = function (updateCallback) {
 		zoneUpdateCB = updateCallback;
 	},
+
 	this.onStatusUpdate = function (updateCallback) {
 		statusUpdateCB = updateCallback;
 	},
-  // not tested
+
+	// not tested
 	this.deviceStateChange = function (device) {
 		console.log((new Date()).toLocaleString() + ' Pulse.deviceStateChange: Device State Change', device.name, device.state);
 
@@ -451,8 +449,10 @@ module.exports = pulse;
 			})
 
 		} else {
+				console.log((new Date()).toLocaleString() + ' Pulse.Sync: Sync stuck?');
 
 		}
 
 	}
+
 }).call(pulse.prototype);
