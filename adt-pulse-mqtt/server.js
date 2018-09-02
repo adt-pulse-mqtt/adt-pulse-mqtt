@@ -133,12 +133,12 @@ myAlarm.onZoneUpdate(
 
     // smartthings bridge assumes actionable devices have a topic set with cmd
     // adt/zone/DEVICE_NAME/state needs to turn Macintosh
-    // smartthings/DEVICE_NAME/door/cmd
+    // smartthings/DEVICE_NAME/contact/cmd
     // or
     // smartthings/DEVICE_NAME/motion/cmd
 
     if (smartthings){
-      var contactType = "door";
+      var contactType = "contact";
       var contactValue= (device.status == "devStatOK")? "closed":"open";
 
       if (device.tags.includes("motion")) {
