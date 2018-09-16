@@ -23,7 +23,7 @@
         "username": "",
         "password": ""
       },
-      "mqtt_host" :  "core-mosquitto",
+      "mqtt_url" :  "mqtt://core-mosquitto",
       "mqtt_connect_options" :  {
         "username" : "",
         "password" : ""
@@ -42,7 +42,7 @@
         "username": "str",
         "password": "str"
       },
-      "mqtt_host" : "str",
+      "mqtt_url" : "str",
       "mqtt_connect_options" : {
          "username" : "str",
          "password" : "str"
