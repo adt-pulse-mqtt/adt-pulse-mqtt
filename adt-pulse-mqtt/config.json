@@ -1,9 +1,9 @@
 {
   "name": "ADT Pulse MQTT",
-  "version": "0.1",
+  "version": "0.2.2.6",
   "slug": "adt-pulse-mqtt",
   "description": "ADT Pulse Bridge using MQTT",
-  "url":"https://github.com/digitalcraig/adt-pulse-mqtt",
+  "url":"https://github.com/haruny/adt-pulse-mqtt",
   "startup": "application",
   "boot": "auto",
   "host_network" : false,
@@ -28,8 +28,11 @@
         "username" : "",
         "password" : ""
       },
-      "alarm_state_topic" : "home/alarm",
-      "alarm_command_topic" : "home/alarm/set"
+      "alarm_state_topic": "home/alarm/state",
+      "alarm_command_topic": "home/alarm/cmd",
+      "zone_state_topic": "adt/zone",
+      "smartthings_topic": "smartthings",
+      "smartthings": false
     },
     "schema": {
       "ssl": "bool",
@@ -45,7 +48,9 @@
          "password" : "str"
       },
       "alarm_state_topic" : "str",
-      "alarm_command_topic": "str"
-    },
-    "image": "digitalcraig/image-{arch}-adt-pulse-mqtt"
+      "alarm_command_topic": "str",
+      "zone_state_topic": "str",
+      "smartthings_topic": "str",
+      "smartthings": "bool"
+    }
 }
