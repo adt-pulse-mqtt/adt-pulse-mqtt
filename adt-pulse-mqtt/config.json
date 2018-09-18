@@ -1,6 +1,6 @@
 {
   "name": "ADT Pulse MQTT",
-  "version": "0.2.2.6",
+  "version": "0.2.2.7",
   "slug": "adt-pulse-mqtt",
   "description": "ADT Pulse Bridge using MQTT",
   "url":"https://github.com/haruny/adt-pulse-mqtt",
@@ -23,8 +23,9 @@
         "username": "",
         "password": ""
       },
-      "mqtt_url" :  "mqtt://core-mosquitto",
-      "mqtt_connect_options" :  {
+      "mqtt_host" : "core-mosquitto",
+	  "mqtt_url" : "",
+	  "mqtt_connect_options" :  {
         "username" : "",
         "password" : ""
       },
@@ -42,8 +43,9 @@
         "username": "str",
         "password": "str"
       },
-      "mqtt_url" : "str",
-      "mqtt_connect_options" : {
+       "mqtt_host" : "str",
+	   "mqtt_url" : "str?",
+       "mqtt_connect_options" : {
          "username" : "str",
          "password" : "str"
       },

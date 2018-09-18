@@ -7,7 +7,10 @@ SmartApp allows automatic running our Routines upon alarm changing states.
 ## Hassio Setup
 Add the repository (https://github.com/haruny/adt-pulse-mqtt/) to Hassio.
 Hit Install. Don't forget to configure `pulse_login` with your ADT Pulse Portal username and password. I recommend using a separate login for Home Assistant use. 
-You'll need an MQTT broker to run this. I'm using Mosquitto broker (https://www.home-assistant.io/addons/mosquitto/)
+You'll need an MQTT broker to run this. I'm using Mosquitto broker (https://www.home-assistant.io/addons/mosquitto/).
+
+In most cases, the mqtt_host option and the mqtt username and password options are sufficient. 
+For advanced confgurations, you may want to use the mqtt_url option instead. Additional connections options are available (see https://www.npmjs.com/package/mqtt#connect).
 
 ### Configuration
 Change the config of the app in hassio then edit the configuration.yaml:
