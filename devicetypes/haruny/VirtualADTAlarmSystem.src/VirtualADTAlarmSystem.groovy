@@ -1,8 +1,8 @@
 /**
- *   Virtual ADT Alarm System
+ *  ADT Alarm SmartApp
  *
- *  v.0.0.2
- *  Copyright 2018 Harun Yayli
+ *  v.0.0.3
+ *  Copyright 2018 HARUN YAYLI
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
@@ -14,95 +14,149 @@
  *  for the specific language governing permissions and limitations under the License.
  *
  */
+definition(
+    name: "ADT Alarm SmartApp",
+    namespace: "haruny",
+    author: "Harun Yayli",
+    description: "The app creates a virtual ADT alarm panel and allows you to run routines depending on the alarm status.\r\nTo be used in junction with ADT MQTT Bridge.\r\nhttps://github.com/haruny/adt-pulse-mqtt",
+    category: "Safety & Security",
+    iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
+    iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
+    iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png")
 
-metadata {
-	definition (name: "Virtual ADT Alarm System", namespace: "haruny", author: "Harun Yayli") {
-		capability "Alarm"
-		capability "Sensor"
-		capability "Actuator"
 
-        command "stay"
-        command "away"
-        command "off_push"
-        command "stay_push"
-        command "away_push"
-	}
+preferences {
+    page(name: "selectActions")
+}
 
-	tiles(scale: 2) {
-		multiAttributeTile(name:"alarm", type: "generic", width: 6, height: 4){
-            tileAttribute ("device.alarm", key: "PRIMARY_CONTROL") {
-                attributeState "off", label:'Off' , icon:"st.security.alarm.off", backgroundColor:"#cccccc" // gray
-                attributeState "stay", label:'Stay', icon:"st.Home.home4", backgroundColor:"#00a0dc" // blue
-                attributeState "away", label:'Away', icon:"st.security.alarm.on", backgroundColor:"#e86d13" // orange
-                attributeState "triggered", label:'Burglar Alarm!', icon:"st.alarm.alarm.alarm", backgroundColor:"#e81323" //red
+def selectActions() {
+    dynamicPage(name: "selectActions", title: "Select what happens when the alarm turns into the specified state", install: true, uninstall: true) {
+        def actions = location.helloHome?.getPhrases()*.label
+		
+        section("Select Hub"){
+        	input "theHub", "hub", title: "Select the hub for the alarm device to be installed ", multiple: false, required: true
+    	}
+        if (actions) {
+            actions.sort()
+
+            section("Disarm Actions") {
+                    input "actionDisarm", "enum", title: "Select a routine to execute when disarm:", options: actions, required: false
             }
-		}
-		// off
-		standardTile("off", "device.alarm", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
-            state "default", label:'Off'   , action:"off_push"     , icon:"st.security.alarm.off", background:"#ffffff", nextState:"pending"
-            state "pending", label:'Pending', icon:"st.security.alarm.off", nextState:"default"
-        }
-		// stay
-        standardTile("strobe", "device.alarm", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
-           state "default", label:'Stay'   , action:"stay_push", icon:"st.Home.home4", background:"#ffffff", nextState:"pending"
-           state "pending", label:'Pending', icon:"st.Home.home4", nextState:"default"
-        }
-		//away
-        standardTile("siren", "device.alarm", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
-            state "default", label:'Away'  , action:"away_push", icon:"st.security.alarm.on", background:"#ffffff", nextState:"pending"
-            state "pending", label:'Pending', icon:"st.security.alarm.on", nextState:"default"
-        }
+            section("Disarm Trigger Routine") {
+                    input "triggerDisarm", "enum", title: "Select a routine to disarm the alarm after its triggered:", options: actions, required: false
+            }
+            section("Stay Actions") {
+                    input "actionStay", "enum", title: "Select a routine to execute when armed as Stay:", options: actions, required: false
+            }
+            section("Stay Trigger Routine") {
+                    input "triggerStay", "enum", title: "Select a routine to arm the alarm as stay after its triggered:", options: actions, required: false
+            }
+            section("Away Actions") {
+                 input "actionAway", "enum", title: "Select a routine to execute when armed as Away:", options: actions, required: false
+            }
 
-		main "alarm"
-        details(["alarm","off","strobe","siren"])
+			section("Away Trigger Routine") {
+                 input "triggerAway", "enum", title: "Select a routine to arm the alarm as Away after its triggered:", options: actions, required: false
+            }
+			section("Alarm Actions") {
+                 input "actionAlarm", "enum", title: "Select a routine to execute when alarm is triggered", options: actions, required: false
+            }
+        }
+        else{
+        	section("No Routines found!"){
+	        	paragraph "No Routines found. Create routines and try again."
+            }
+        }
+        
+        section("Finally"){
+			paragraph "Don't forget to select the alarm device in the MQTT Bridge app. When you remove this app, Virtual ADT device will be removed. Before removing the app, remove the device from MQTT Bridge"
+		}
+ 
    }
 }
-
-// stay
-def strobe() {
-    stay()
-}
-// away
-def siren() {
-	away()
-}
-// triggerred alarm
-def both() {
-	alarmTriggered()
-}
-def stay_push(){
-    sendEvent(name: "alarm", value: "stay_push")
-    log.debug "Stay Push"
-}
-def away_push(){
-	sendEvent(name: "alarm", value: "away_push")
-   log.debug "Push Away"
-}
-def off_push() {
-   sendEvent(name: "alarm", value: "off_push")
-   log.debug "Push Off"
+    
+def installed() {
+	log.debug "Installed with settings: ${settings}"
+    if (getAllChildDevices().size() == 0) {
+		def adtDevice = addChildDevice("haruny", "Virtual ADT Alarm System", "adtvas", theHub.id, [completedSetup: true, label: "ADT Alarm System"])
+	}
+	initialize()
 }
 
+def routineChanged(evt) {
 
-def stay(){
-    sendEvent(name: "alarm", value: "stay")
-    log.trace "Device Stay"
-}
-def away(){
-   sendEvent(name: "alarm", value: "away")
-   log.trace "Device Away"
-}
-// off
-def off() {
-   sendEvent(name: "alarm", value: "off")
-   log.trace "Device Off"
+	if (settings.triggerStay!=null && settings.triggerStay==evt.displayName){
+		    log.debug "ADT Alarm App caught an evt: ${evt.displayName} will push Stay button"
+        	getChildDevice("adtvas").stay_push();
+    }
+
+	if (settings.triggerDisarm!=null && settings.triggerDisarm==evt.displayName){
+		    log.debug "ADT Alarm App caught an evt: ${evt.displayName} will push Disarm button"
+        	getChildDevice("adtvas").off_push();
+    }
+
+if (settings.triggerAway!=null && settings.triggerAway==evt.displayName){
+		    log.debug "ADT Alarm App caught an evt: ${evt.displayName} will push Away button"
+        	getChildDevice("adtvas").away_push();
+    }
+
+
 }
 
-def alarmTriggered(){
-	sendEvent(name: "alarm", value: "triggered")
-    log.trace "Alarm Triggered"
+def uninstalled() {
+    getAllChildDevices().each {
+        deleteChildDevice(it.deviceNetworkId)
+    }
 }
 
-def parse(String description) {
-// no use!
+def updated() {
+	log.debug "Updated with settings: ${settings}"
+
+	unsubscribe()
+	initialize()
+}
+
+def adtEventHandlerMethod(evt){
+	log.debug "Alarm had an event ${evt.value}"
+    
+    switch (evt.value){
+    	case "off":
+        	if (settings.actionDisarm!=null){
+            	log.debug "Calling debug routine ${settings.actionDisarm}"
+                location.helloHome?.execute(settings.actionDisarm)
+            }
+        	break;
+    	case "stay":
+        	if (settings.actionStay!=null){
+            	log.debug "Calling debug routine ${settings.actionStay}"
+                location.helloHome?.execute(settings.actionStay)
+            }
+        	break;
+       	case "away":
+        	if (settings.actionAway!=null){
+            	log.debug "Calling debug routine ${settings.actionAway}"
+                location.helloHome?.execute(settings.actionAway)
+            }
+        	break;
+    	case "triggered":
+           	if (settings.actionAlarm!=null){
+            	log.debug "Calling debug routine ${settings.actionAlarm}"
+                location.helloHome?.execute(settings.actionAlarm)
+            }
+    	    break;
+        default:
+        	log.debug "Unknown event ${evt.value}"
+	        break;
+
+    }
+    
+}
+def initialize() {
+	if (getAllChildDevices().size() != 0) {
+    	getAllChildDevices().each{
+        	subscribe(it, "alarm", "adtEventHandlerMethod") 
+        }
+    }
+    subscribe(location, "routineExecuted", routineChanged)
+
 }
