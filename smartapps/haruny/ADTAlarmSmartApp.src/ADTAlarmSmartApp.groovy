@@ -1,6 +1,7 @@
 /**
  *  ADT Alarm SmartApp
  *
+ *  v.0.0.3
  *  Copyright 2018 HARUN YAYLI
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -41,13 +42,23 @@ def selectActions() {
             section("Disarm Actions") {
                     input "actionDisarm", "enum", title: "Select a routine to execute when disarm:", options: actions, required: false
             }
+            section("Disarm Trigger Routine") {
+                    input "triggerDisarm", "enum", title: "Select a routine to disarm the alarm after its triggered:", options: actions, required: false
+            }
             section("Stay Actions") {
                     input "actionStay", "enum", title: "Select a routine to execute when armed as Stay:", options: actions, required: false
+            }
+            section("Stay Trigger Routine") {
+                    input "triggerStay", "enum", title: "Select a routine to arm the alarm as stay after its triggered:", options: actions, required: false
             }
             section("Away Actions") {
                  input "actionAway", "enum", title: "Select a routine to execute when armed as Away:", options: actions, required: false
             }
-            section("Alarm Actions") {
+
+			section("Away Trigger Routine") {
+                 input "triggerAway", "enum", title: "Select a routine to arm the alarm as Away after its triggered:", options: actions, required: false
+            }
+			section("Alarm Actions") {
                  input "actionAlarm", "enum", title: "Select a routine to execute when alarm is triggered", options: actions, required: false
             }
         }
@@ -70,6 +81,26 @@ def installed() {
 		def adtDevice = addChildDevice("haruny", "Virtual ADT Alarm System", "adtvas", theHub.id, [completedSetup: true, label: "ADT Alarm System"])
 	}
 	initialize()
+}
+
+def routineChanged(evt) {
+
+	if (settings.triggerStay!=null && settings.triggerStay==evt.displayName){
+		    log.debug "ADT Alarm App caught an evt: ${evt.displayName} will push Stay button"
+        	getChildDevice("adtvas").stay_push();
+    }
+
+	if (settings.triggerDisarm!=null && settings.triggerDisarm==evt.displayName){
+		    log.debug "ADT Alarm App caught an evt: ${evt.displayName} will push Disarm button"
+        	getChildDevice("adtvas").off_push();
+    }
+
+if (settings.triggerAway!=null && settings.triggerAway==evt.displayName){
+		    log.debug "ADT Alarm App caught an evt: ${evt.displayName} will push Away button"
+        	getChildDevice("adtvas").away_push();
+    }
+
+
 }
 
 def uninstalled() {
@@ -126,4 +157,6 @@ def initialize() {
         	subscribe(it, "alarm", "adtEventHandlerMethod") 
         }
     }
+    subscribe(location, "routineExecuted", routineChanged)
+
 }
