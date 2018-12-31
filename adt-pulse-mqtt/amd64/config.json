@@ -1,0 +1,58 @@
+{
+  "name": "ADT Pulse MQTT",
+  "version": "0.2.2.7",
+  "slug": "adt-pulse-mqtt",
+  "description": "ADT Pulse Bridge using MQTT",
+  "url":"https://github.com/haruny/adt-pulse-mqtt",
+  "startup": "application",
+  "boot": "auto",
+  "host_network" : false,
+  "arch": [
+    "armhf",
+    "amd64"
+  ],
+  "map": [
+    "share:rw",
+    "ssl"
+  ],
+  "options": {
+      "ssl": false,
+      "certfile": "fullchain.pem",
+      "keyfile": "privkey.pem",
+      "pulse_login" : {
+        "username": "",
+        "password": ""
+      },
+      "mqtt_host" : "core-mosquitto",
+	  "mqtt_url" : "",
+	  "mqtt_connect_options" :  {
+        "username" : "",
+        "password" : ""
+      },
+      "alarm_state_topic": "home/alarm/state",
+      "alarm_command_topic": "home/alarm/cmd",
+      "zone_state_topic": "adt/zone",
+      "smartthings_topic": "smartthings",
+      "smartthings": false
+    },
+    "schema": {
+      "ssl": "bool",
+      "certfile": "str",
+      "keyfile": "str",
+      "pulse_login" : {
+        "username": "str",
+        "password": "str"
+      },
+       "mqtt_host" : "str",
+	   "mqtt_url" : "str?",
+       "mqtt_connect_options" : {
+         "username" : "str",
+         "password" : "str"
+      },
+      "alarm_state_topic" : "str",
+      "alarm_command_topic": "str",
+      "zone_state_topic": "str",
+      "smartthings_topic": "str",
+      "smartthings": "bool"
+    }
+}
