@@ -26,4 +26,3 @@ RUN chmod a+x /run.sh
 RUN [ "cross-build-end" ]  
 
 CMD [ "/run.sh" ]
-
