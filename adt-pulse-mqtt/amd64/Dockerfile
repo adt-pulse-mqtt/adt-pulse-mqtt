@@ -11,14 +11,14 @@ RUN apk add --update nodejs-npm
 WORKDIR /usr/src/app
 
 # Install app dependencies
-COPY package.json .
+COPY ../package.json .
 RUN npm install
 
 # Bundle app source
-COPY . .
+COPY ../. .
 
 # Copy data for add-on
-COPY run.sh /
+COPY ../run.sh /
 RUN chmod a+x /run.sh
 
 CMD [ "/run.sh" ]
