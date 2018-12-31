@@ -4,7 +4,7 @@ FROM $BUILD_FROM
 ENV LANG C.UTF-8
 ENV NODE_ENV production
 
-RUN [ "cross-build-start" ]
+COPY qemu-arm-static /usr/bin/qemu-arm-static
 
 # Install node and npm
 RUN apk add --update nodejs
@@ -21,8 +21,6 @@ COPY . .
 
 # Copy data for add-on
 COPY run.sh /
-RUN chmod a+x /run.sh
-
-RUN [ "cross-build-end" ]  
+RUN chmod a+x /run.sh  
 
 CMD [ "/run.sh" ]
