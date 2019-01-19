@@ -35,7 +35,7 @@ module.exports = pulse;
 
 	this.config = {
 		baseUrl: 'https://portal.adtpulse.com',
-		prefix: '/myhome/10.0.0-60',
+		prefix: '/myhome/13.0.0-153', // you don't need to change this every time. Addon automatically grabs the latest one on the first call.
 		initialURI: '/',
 		signinURI: '/access/signin.jsp',
 		authURI: '/access/signin.jsp?e=n&e=n&&partner=adt',
@@ -43,7 +43,7 @@ module.exports = pulse;
 		summaryURI: '/summary/summary.jsp',
 		statusChangeURI: '/quickcontrol/serv/ChangeVariableServ',
 		armURI: '/quickcontrol/serv/RunRRACommand',
-		disarmURI: '/quickcontrol/armDisarmRRA.jsp?href=rest/adt/ui/client/security/setArmState',
+		disarmURI: '/quickcontrol/armDisarm.jsp?href=rest/adt/ui/client/security/setArmState',
 		otherStatusURI: '/ajax/currentStates.jsp',
 		syncURI: '/Ajax/SyncCheckServ',
 		logoutURI: '/access/signout.jsp',
@@ -364,7 +364,7 @@ module.exports = pulse;
 			url= this.config.baseUrl+this.config.prefix+this.config.disarmURI+'&armstate='+ action.prev_state +"&arm=off";
 		}
 
-		console.log((new Date()).toLocaleString() + ' Pulse.setAlarmState calling the urls');
+		console.log((new Date()).toLocaleString() + ' Pulse.setAlarmState calling the urls:' + url);
 
 		request(
 			{
