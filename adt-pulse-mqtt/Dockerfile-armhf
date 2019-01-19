@@ -5,7 +5,10 @@ ENV LANG C.UTF-8
 ENV NODE_ENV production
 ENV QEMU_EXECVE 1
 
-COPY armhf/ /usr/bin/
+COPY armhf/qemu-arm-static /usr/bin
+COPY armhf/resin-xbuild /usr/bin
+
+RUN [ "/usr/bin/qemu-arm-static", "/bin/sh", "-c", "ln -s /usr/bin/resin-xbuild /usr/bin/cross-build-start; ln -s /usr/bin/resin-xbuild /usr/bin/cross-build-end; ln /bin/sh /bin/sh.real" ]
 
 RUN [ "cross-build-start" ]
 
