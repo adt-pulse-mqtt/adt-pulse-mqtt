@@ -32,9 +32,10 @@ After running the add-on, to list all the zones found, you can call:
 # mosquitto_sub -h YOUR_MQTT_IP -v -t "adt/zone/#"
 </pre>
 
-Add the following to the configuration.yaml for each zone:
+Add the following to the configuration.yaml for each zone in binary_sensor:
 
 <pre>
+binary_sensor:
   - platform: mqtt
     name: "Kitchen Door"
     state_topic: "adt/zone/Kitchen Door/state"
