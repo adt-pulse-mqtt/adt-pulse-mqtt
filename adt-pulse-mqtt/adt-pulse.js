@@ -307,7 +307,7 @@ module.exports = pulse;
 					// looks like some folks have the sat value displayed differently.
 
 					if (body.includes("setShiftState")){
-					  sat = body.match(/sat\=(.+?)\'/)[1];
+					  sat = body.match(/setShiftState.+?([0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}).+?\;/)[1];
 					}
 					else{
 					  sat = body.match(/sat.+value=\"(.+?)\"/)[1];
