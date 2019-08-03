@@ -1,7 +1,7 @@
 {
   "name": "ADT Pulse MQTT",
   "version": "0.2.2.10",
-  "slug": "adt-pulse-mqtt",
+  "slug": "adtpulsemqtt",
   "description": "ADT Pulse Bridge using MQTT",
   "url":"https://github.com/haruny/adt-pulse-mqtt",
   "startup": "application",
