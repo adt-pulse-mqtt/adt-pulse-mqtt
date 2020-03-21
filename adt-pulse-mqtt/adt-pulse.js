@@ -265,11 +265,13 @@ module.exports = pulse;
 							 *        devStatAlarm (detected CO/Smoke)
 							 *        devStatUnknown (device offline)
 							 */
+							timestamp = Math.floor(Date.now() / 1000) // timetamp in seconds
+
 							return {
 								id: `sensor-${theZoneNumber}`,
 								name: theName || 'Unknown Sensor',
 								tags: theTag || 'sensor',
-								timestamp: new Date.now(),
+								timestamp: timestamp,
 								state: theState || 'devStatUnknown',
 							  };
 
