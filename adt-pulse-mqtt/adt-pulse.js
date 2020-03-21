@@ -178,12 +178,12 @@ module.exports = pulse;
 			},
 			function(err, httpResponse, body) {
 				if(err){
-					console.log((new Date()).toLocaleString() + ' Pulse.getZoneStatus: Zone JSON Failed');
+					console.log((new Date().toLocaleString()) + ' Pulse.getZoneStatus: Zone JSON Failed');
 				} else {
 					try {
 						var json = JSON.parse(body.trim());
+						console.log((new Date().toLocaleString()) + ' DEBUG: Raw JSON:' + json.stringify());
 						if (json != null){
-							console.log((new Date()).toLocaleString() + ' DEBUG: Raw JSON:' + json.stringify());
 							json.items.forEach(function(obj){
 									o = obj;
 									delete o.deprecatedAction;
@@ -194,10 +194,10 @@ module.exports = pulse;
 								zoneUpdateCB(o);
 							})
 						} else {
-							console.log((new Date()).toLocaleString() + ' Pulse: No Zone JSON');
+							console.log((new Date().toLocaleString())+ ' Pulse: No Zone JSON');
 						}
 					} catch(e) {
-					   console.log((new Date()).toLocaleString() + ' Pulse: Invalid Zone JSON'+e.stack);
+					   console.log((new Date().toLocaleString()) + ' Pulse: Invalid Zone JSON'+ e.stack);
 					}
 				}
 
@@ -216,18 +216,17 @@ module.exports = pulse;
 				jar: j,
 				headers: {
 					'User-Agent': ua,
-					'Referer': this.config.baseUrl+this.config.prefix.this.summaryURI
+					'Referer': this.config.baseUrl+this.config.prefix+this.summaryURI
 				},
 			},
 			function(err, httpResponse, body) {
 				if(err){
-					console.log((new Date()).toLocaleString() + ' Pulse.getZoneStatus(via Orb): Zone JSON Failed');
+					console.log((new Date().toLocaleString()) + ' Pulse.getZoneStatus (via Orb): Zone JSON Failed');
 				} else {
 					try {
 						var json = JSON.parse(body.trim());
-						console.log((new Date()).toLocaleString() + ' DEBUG: Raw JSON (via Orb):' + json);
+						console.log((new Date().toLocaleString()) + ' DEBUG: Raw JSON (Orb):' + json.stringify());
 						if (json != null) {
-							console.log((new Date()).toLocaleString() + ' DEBUG: Raw JSON (via Orb):' + json.stringify());
 							json.items.forEach(function(obj){
 									o = obj;
 									delete o.deprecatedAction;
@@ -238,10 +237,10 @@ module.exports = pulse;
 								zoneUpdateCB(o);
 							})
 						} else{
-							console.log((new Date()).toLocaleString() + ' Pulse: No Zone JSON (via Orb)');
+							console.log((new Date().toLocaleString())+ ' Pulse (Orb): No Zone JSON');
 						}
 					} catch(e) {
-					   console.log((new Date()).toLocaleString() + ' Pulse: Invalid Zone JSON'+e.stack);
+						console.log((new Date().toLocaleString()) + ' Pulse: Invalid Zone JSON (via Orb)'+ e.stack);
 					}
 				}
 
