@@ -40,6 +40,7 @@ module.exports = pulse;
 		signinURI: '/access/signin.jsp',
 		authURI: '/access/signin.jsp?e=n&e=n&&partner=adt',
 		sensorURI: '/ajax/homeViewDevAjax.jsp',
+		sensorOrbURI: '/ajax/orb.jsp',
 		summaryURI: '/summary/summary.jsp',
 		statusChangeURI: '/quickcontrol/serv/ChangeVariableServ',
 		armURI: '/quickcontrol/serv/RunRRACommand',
@@ -201,100 +202,45 @@ module.exports = pulse;
 		return deferred.promise;
 	},
 
-	Pulse.prototype.getZoneStatusOrb = function getZoneStatusOrb() {
-		const deferred = Q.defer();
-	  
-		this.hasInternetWrapper(deferred, () => {
-		  this.consoleLogger('ADT Pulse: Getting zone status (via orb)...', 'log');
-	  
-		  request.get(
-			`https://portal.adtpulse.com/myhome/${lastKnownVersion}/ajax/orb.jsp`,
-			this.generateRequestOptions({
-			  headers: {
-				Accept: '*/*',
-				Referer: `https://portal.adtpulse.com/myhome/${lastKnownVersion}/summary/summary.jsp`,
-			  },
-			}),
-			(error, response, body) => {
-			  const regex = new RegExp(/(\/myhome\/)([0-9.-]+)(\/ajax\/orb\.jsp)/);
-			  const responsePath = _.get(response, 'request.uri.path');
-	  
-			  this.consoleLogger(`ADT Pulse: Response path -> ${responsePath}`, 'log');
-			  this.consoleLogger(`ADT Pulse: Response path matches -> ${regex.test(responsePath)}`, 'log');
-	  
-			  if (error || !regex.test(responsePath) || body.indexOf('<html') > -1) {
-				authenticated = false;
-	  
-				this.consoleLogger('ADT Pulse: Get zone status (via orb) failed.', 'error');
-	  
-				deferred.reject({
-				  action: 'GET_ZONE_STATUS_ORB',
-				  success: false,
-				  info: {
-					error,
-					message: this.getErrorMessage(body),
-				  },
-				});
-			  } else {
-				const $ = cheerio.load(body);
-				const sensors = $('#orbSensorsList table tr.p_listRow').toArray();
-	  
-				const output = _.map(sensors, (sensor) => {
-				  const theSensor = cheerio.load(sensor);
-				  const theName = theSensor('a.p_deviceNameText').html();
-				  const theZone = theSensor('span.p_grayNormalText').html();
-				  const theState = theSensor('span.devStatIcon canvas').attr('icon');
-	  
-				  const theZoneNumber = (theZone) ? theZone.replace(/(Zone&#xA0;)([0-9]{1,2})/, '$2') : 0;
-	  
-				  let theTag;
-	  
-				  if (theName && theState !== 'devStatUnknown') {
-					if (theName.includes('Door') || theName.includes('Window')) {
-					  theTag = 'sensor,doorWindow';
-					} else if (theName.includes('Glass')) {
-					  theTag = 'sensor,glass';
-					} else if (theName.includes('Motion')) {
-					  theTag = 'sensor,motion';
-					} else if (theName.includes('Gas')) {
-					  theTag = 'sensor,co';
-					} else if (theName.includes('Smoke') || theName.includes('Heat')) {
-					  theTag = 'sensor,fire';
-					}
-				  }
-	  
-				  /**
-				   * Expected output.
-				   *
-				   * id:    sensor-[integer]
-				   * name:  device name
-				   * tags:  sensor,[doorWindow,motion,glass,co,fire]
-				   * state: devStatOK (device okay)
-				   *        devStatOpen (door/window opened)
-				   *        devStatMotion (detected motion)
-				   *        devStatTamper (glass broken or device tamper)
-				   *        devStatAlarm (detected CO/Smoke)
-				   *        devStatUnknown (device offline)
-				   */
-				  return {
-					id: `sensor-${theZoneNumber}`,
-					name: theName || 'Unknown Sensor',
-					tags: theTag || 'sensor',
-					state: theState || 'devStatUnknown',
-				  };
-				});
-	  
-				this.consoleLogger('ADT Pulse: Get zone status (via orb) success.', 'log');
-	  
-				deferred.resolve({
-				  action: 'GET_ZONE_STATUS_ORB',
-				  success: true,
-				  info: output,
-				});
-			  }
+	this.getZoneStatusOrb = function() {
+		console.log((new Date()).toLocaleString() + ' Pulse.getZoneStatus(via Orb): Getting Zone Statuses');
+		var deferred = q.defer();
+		request(
+			{
+				url: this.config.baseUrl+this.config.prefix+this.config.sensorOrbURI,
+				jar: j,
+				headers: {
+					'User-Agent': ua,
+					'Referer': this.config.baseUrl+this.config.prefix.this.summaryURI
+				},
 			},
-		  );
-		});	
+			function(err, httpResponse, body) {
+				if(err){
+					console.log((new Date()).toLocaleString() + ' Pulse.getZoneStatus(via Orb): Zone JSON Failed');
+				} else {
+					try {
+						var json = JSON.parse(body.trim());
+						console.log((new Date()).toLocaleString() + ' DEBUG: Raw JSON (via Orb):' + json);
+						json.items.forEach(function(obj){
+								o = obj;
+								delete o.deprecatedAction;
+								o.status = obj.state.icon;
+								o.statusTxt = obj.state.statusTxt;
+								o.activityTs = obj.state.activityTs;
+								delete o.state;
+					   		zoneUpdateCB(o);
+						})
+					} catch(e) {
+					   console.log((new Date()).toLocaleString() + ' Pulse: Invalid Zone JSON'+e.stack);
+					}
+				}
+
+			}
+		);
+
+		return deferred.promise;
+	},
+
 
 	this.getDeviceStatus = function() { // not tested
 		console.log((new Date()).toLocaleString() + ' Pulse.getDeviceStatus: Getting Device Statuses');
