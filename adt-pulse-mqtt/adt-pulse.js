@@ -182,15 +182,19 @@ module.exports = pulse;
 				} else {
 					try {
 						var json = JSON.parse(body.trim());
-						json.items.forEach(function(obj){
-								o = obj;
-								delete o.deprecatedAction;
-								o.status = obj.state.icon;
-								o.statusTxt = obj.state.statusTxt;
-								o.activityTs = obj.state.activityTs;
-								delete o.state;
-					   		zoneUpdateCB(o);
-						})
+						if (json != null){
+							json.items.forEach(function(obj){
+									o = obj;
+									delete o.deprecatedAction;
+									o.status = obj.state.icon;
+									o.statusTxt = obj.state.statusTxt;
+									o.activityTs = obj.state.activityTs;
+									delete o.state;
+								zoneUpdateCB(o);
+							})
+						} else {
+							console.log((new Date()).toLocaleString() + ' Pulse: No Zone JSON');
+						}
 					} catch(e) {
 					   console.log((new Date()).toLocaleString() + ' Pulse: Invalid Zone JSON'+e.stack);
 					}
@@ -221,15 +225,19 @@ module.exports = pulse;
 					try {
 						var json = JSON.parse(body.trim());
 						console.log((new Date()).toLocaleString() + ' DEBUG: Raw JSON (via Orb):' + json);
-						json.items.forEach(function(obj){
-								o = obj;
-								delete o.deprecatedAction;
-								o.status = obj.state.icon;
-								o.statusTxt = obj.state.statusTxt;
-								o.activityTs = obj.state.activityTs;
-								delete o.state;
-					   		zoneUpdateCB(o);
-						})
+						if (json != null) {
+							json.items.forEach(function(obj){
+									o = obj;
+									delete o.deprecatedAction;
+									o.status = obj.state.icon;
+									o.statusTxt = obj.state.statusTxt;
+									o.activityTs = obj.state.activityTs;
+									delete o.state;
+								zoneUpdateCB(o);
+							})
+						} else{
+							console.log((new Date()).toLocaleString() + ' Pulse: No Zone JSON (via Orb)');
+						}
 					} catch(e) {
 					   console.log((new Date()).toLocaleString() + ' Pulse: Invalid Zone JSON'+e.stack);
 					}
