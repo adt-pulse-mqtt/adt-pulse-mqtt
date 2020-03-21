@@ -183,6 +183,7 @@ module.exports = pulse;
 					try {
 						var json = JSON.parse(body.trim());
 						if (json != null){
+							console.log((new Date()).toLocaleString() + ' DEBUG: Raw JSON:' + json.stringify());
 							json.items.forEach(function(obj){
 									o = obj;
 									delete o.deprecatedAction;
@@ -226,6 +227,7 @@ module.exports = pulse;
 						var json = JSON.parse(body.trim());
 						console.log((new Date()).toLocaleString() + ' DEBUG: Raw JSON (via Orb):' + json);
 						if (json != null) {
+							console.log((new Date()).toLocaleString() + ' DEBUG: Raw JSON (via Orb):' + json.stringify());
 							json.items.forEach(function(obj){
 									o = obj;
 									delete o.deprecatedAction;
