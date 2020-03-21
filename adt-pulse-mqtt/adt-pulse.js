@@ -257,6 +257,7 @@ module.exports = pulse;
 							 * id:    sensor-[integer]
 							 * name:  device name
 							 * tags:  sensor,[doorWindow,motion,glass,co,fire]
+							 * timestamp: timestamp of last activity
 							 * state: devStatOK (device okay)
 							 *        devStatOpen (door/window opened)
 							 *        devStatMotion (detected motion)
@@ -268,6 +269,7 @@ module.exports = pulse;
 								id: `sensor-${theZoneNumber}`,
 								name: theName || 'Unknown Sensor',
 								tags: theTag || 'sensor',
+								timestamp: new Date.now();
 								state: theState || 'devStatUnknown',
 							  };
 
