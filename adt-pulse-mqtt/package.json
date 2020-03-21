@@ -18,6 +18,6 @@
     "q": "~1.0.1",
     "request": "latest",
     "tough-cookie": "^2.3.0",
-    "loadash": "^4.17.15"
+    "lodash": "^4.17.15"
   }
 }
