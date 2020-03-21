@@ -17,6 +17,7 @@
     "cheerio": "latest",
     "q": "~1.0.1",
     "request": "latest",
-    "tough-cookie": "^2.3.0"
+    "tough-cookie": "^2.3.0",
+    "loadash": "^4.17.15"
   }
 }
