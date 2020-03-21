@@ -278,7 +278,7 @@ module.exports = pulse;
 								s = obj;
 								s.stringify(s);
 								zoneUpdateCB(s);
-							}
+							})
         			}
 				}
 		);
