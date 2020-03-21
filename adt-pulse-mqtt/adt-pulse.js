@@ -276,7 +276,7 @@ module.exports = pulse;
 							console.log((new Date().toLocaleString()) + 'ADT Pulse: Get zone status (via orb) success.');
 							output.forEach(function(obj){
 								s = obj;
-								s.stringify(s);
+								console.log((new Date().toLocaleString()) + s.toLocaleString());
 								zoneUpdateCB(s);
 							})
         			}
