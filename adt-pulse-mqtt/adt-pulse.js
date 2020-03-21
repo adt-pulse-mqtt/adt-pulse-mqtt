@@ -4,6 +4,7 @@ var tough = require('tough-cookie');
 var request = require('request');
 var q = require('q');
 var cheerio = require('cheerio');
+var _ = require('loadash');
 
 //Cookie jar
 var j;
