@@ -47,6 +47,15 @@ binary_sensor:
 </pre>
 Note: State topic names come from your Pulse configuration.
 
+The possibible state values are:
+
+  * devStatOK (device okay)
+  * devStatOpen (door/window opened)
+  *        devStatMotion (detected motion)
+	*        devStatTamper (glass broken or device tamper)
+	*        devStatAlarm (detected CO/Smoke)
+	*        devStatUnknown (device offline)
+
 I'm limited with what I have as zones, for different devices please submit your MQTT dump (for the zones) in issues. I'll try to add the support for it.
 
 

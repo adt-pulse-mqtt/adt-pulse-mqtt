@@ -6,7 +6,7 @@ var myAlarm = new Pulse(config.pulse_login.username, config.pulse_login.password
 
 // Use mqtt_url option if specified, otherwise build URL using host option
 if (config.mqtt_url) {
-   var client = new mqtt.connect(config.mqtt_url, config.mqtt_options); 
+   var client = new mqtt.connect(config.mqtt_url, config.mqtt_connect_options); 
 }
 else {
    var client = new mqtt.connect("mqtt://"+config.mqtt_host,config.mqtt_connect_options);
