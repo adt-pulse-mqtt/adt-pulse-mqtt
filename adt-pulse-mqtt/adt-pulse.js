@@ -182,8 +182,8 @@ module.exports = pulse;
 				} else {
 					try {
 						var json = JSON.parse(body.trim());
-						console.log((new Date().toLocaleString()) + ' DEBUG: Raw JSON:' + json.stringify());
 						if (json != null){
+							console.log((new Date().toLocaleString()) + ' DEBUG: Raw JSON:' + json.stringify());
 							json.items.forEach(function(obj){
 									o = obj;
 									delete o.deprecatedAction;
@@ -225,8 +225,8 @@ module.exports = pulse;
 				} else {
 					try {
 						var json = JSON.parse(body.trim());
-						console.log((new Date().toLocaleString()) + ' DEBUG: Raw JSON (Orb):' + json.stringify());
 						if (json != null) {
+							console.log((new Date().toLocaleString()) + ' DEBUG: Raw JSON (Orb):' + json.stringify());
 							json.items.forEach(function(obj){
 									o = obj;
 									delete o.deprecatedAction;
