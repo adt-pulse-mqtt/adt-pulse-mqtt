@@ -223,33 +223,63 @@ module.exports = pulse;
 				if(err){
 					console.log((new Date().toLocaleString()) + ' Pulse.getZoneStatus (via Orb): Zone JSON Failed');
 				} else {
-					try {
-						var json = JSON.parse(body.trim());
-						if (json != null) {
-							console.log((new Date().toLocaleString()) + ' DEBUG: Raw JSON (Orb):' + json.stringify());
-							json.items.forEach(function(obj){
-									o = obj;
-									delete o.deprecatedAction;
-									o.status = obj.state.icon;
-									o.statusTxt = obj.state.statusTxt;
-									o.activityTs = obj.state.activityTs;
-									delete o.state;
-								zoneUpdateCB(o);
-							})
-						} else{
-							console.log((new Date().toLocaleString())+ ' Pulse (Orb): No Zone JSON');
-						}
-					} catch(e) {
-						console.log((new Date().toLocaleString()) + ' Pulse: Invalid Zone JSON (via Orb)'+ e.stack);
-					}
-				}
+						// Load response from call to Orb and parse html
+						const $ = cheerio.load(body);
+						const sensors = $('#orbSensorsList table tr.p_listRow').toArray();
+						// Map values of table to variables
+						const o = _.map(sensors,(sensor) => {
+							const theSensor = cheerio.load(sensor);
+							const theName = theSensor('a.p_deviceNameText').html();
+							const theZone = theSensor('span.p_grayNormalText').html();
+							const theState = theSensor('span.devStatIcon canvas').attr('icon');
 
-			}
+							const theZoneNumber = (theZone) ? theZone.replace(/(Zone&#xA0;)([0-9]{1,2})/, '$2') : 0;
+
+							let theTag;
+
+							if (theName && theState !== 'devStatUnknown') {
+								if (theName.includes('Door') || theName.includes('Window')) {
+								  theTag = 'sensor,doorWindow';
+								} else if (theName.includes('Glass')) {
+								  theTag = 'sensor,glass';
+								} else if (theName.includes('Motion')) {
+								  theTag = 'sensor,motion';
+								} else if (theName.includes('Gas')) {
+								  theTag = 'sensor,co';
+								} else if (theName.includes('Smoke') || theName.includes('Heat')) {
+								  theTag = 'sensor,fire';
+								}
+							  }
+							/**
+							 * Expected output.
+							 *
+							 * id:    sensor-[integer]
+							 * name:  device name
+							 * tags:  sensor,[doorWindow,motion,glass,co,fire]
+							 * state: devStatOK (device okay)
+							 *        devStatOpen (door/window opened)
+							 *        devStatMotion (detected motion)
+							 *        devStatTamper (glass broken or device tamper)
+							 *        devStatAlarm (detected CO/Smoke)
+							 *        devStatUnknown (device offline)
+							 */
+							return {
+								id: `sensor-${theZoneNumber}`,
+								name: theName || 'Unknown Sensor',
+								tags: theTag || 'sensor',
+								state: theState || 'devStatUnknown',
+							  };
+
+							});
+
+							console.log((new Date().toLocaleString()) + 'ADT Pulse: Get zone status (via orb) success. Sensors:\n' + o.toLocaleString());
+							/* zoneUpdateCB(o); */
+        			}
+				}
 		);
 
 		return deferred.promise;
 	},
-
 
 	this.getDeviceStatus = function() { // not tested
 		console.log((new Date()).toLocaleString() + ' Pulse.getDeviceStatus: Getting Device Statuses');
