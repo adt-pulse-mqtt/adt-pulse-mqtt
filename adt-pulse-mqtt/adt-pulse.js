@@ -160,7 +160,7 @@ module.exports = pulse;
 
 		this.getAlarmStatus().then(function(){
 			that.getDeviceStatus();
-			that.getZoneStatus();
+			that.getZoneStatusOrb();
 		});
 	}
 
@@ -200,6 +200,101 @@ module.exports = pulse;
 
 		return deferred.promise;
 	},
+
+	Pulse.prototype.getZoneStatusOrb = function getZoneStatusOrb() {
+		const deferred = Q.defer();
+	  
+		this.hasInternetWrapper(deferred, () => {
+		  this.consoleLogger('ADT Pulse: Getting zone status (via orb)...', 'log');
+	  
+		  request.get(
+			`https://portal.adtpulse.com/myhome/${lastKnownVersion}/ajax/orb.jsp`,
+			this.generateRequestOptions({
+			  headers: {
+				Accept: '*/*',
+				Referer: `https://portal.adtpulse.com/myhome/${lastKnownVersion}/summary/summary.jsp`,
+			  },
+			}),
+			(error, response, body) => {
+			  const regex = new RegExp(/(\/myhome\/)([0-9.-]+)(\/ajax\/orb\.jsp)/);
+			  const responsePath = _.get(response, 'request.uri.path');
+	  
+			  this.consoleLogger(`ADT Pulse: Response path -> ${responsePath}`, 'log');
+			  this.consoleLogger(`ADT Pulse: Response path matches -> ${regex.test(responsePath)}`, 'log');
+	  
+			  if (error || !regex.test(responsePath) || body.indexOf('<html') > -1) {
+				authenticated = false;
+	  
+				this.consoleLogger('ADT Pulse: Get zone status (via orb) failed.', 'error');
+	  
+				deferred.reject({
+				  action: 'GET_ZONE_STATUS_ORB',
+				  success: false,
+				  info: {
+					error,
+					message: this.getErrorMessage(body),
+				  },
+				});
+			  } else {
+				const $ = cheerio.load(body);
+				const sensors = $('#orbSensorsList table tr.p_listRow').toArray();
+	  
+				const output = _.map(sensors, (sensor) => {
+				  const theSensor = cheerio.load(sensor);
+				  const theName = theSensor('a.p_deviceNameText').html();
+				  const theZone = theSensor('span.p_grayNormalText').html();
+				  const theState = theSensor('span.devStatIcon canvas').attr('icon');
+	  
+				  const theZoneNumber = (theZone) ? theZone.replace(/(Zone&#xA0;)([0-9]{1,2})/, '$2') : 0;
+	  
+				  let theTag;
+	  
+				  if (theName && theState !== 'devStatUnknown') {
+					if (theName.includes('Door') || theName.includes('Window')) {
+					  theTag = 'sensor,doorWindow';
+					} else if (theName.includes('Glass')) {
+					  theTag = 'sensor,glass';
+					} else if (theName.includes('Motion')) {
+					  theTag = 'sensor,motion';
+					} else if (theName.includes('Gas')) {
+					  theTag = 'sensor,co';
+					} else if (theName.includes('Smoke') || theName.includes('Heat')) {
+					  theTag = 'sensor,fire';
+					}
+				  }
+	  
+				  /**
+				   * Expected output.
+				   *
+				   * id:    sensor-[integer]
+				   * name:  device name
+				   * tags:  sensor,[doorWindow,motion,glass,co,fire]
+				   * state: devStatOK (device okay)
+				   *        devStatOpen (door/window opened)
+				   *        devStatMotion (detected motion)
+				   *        devStatTamper (glass broken or device tamper)
+				   *        devStatAlarm (detected CO/Smoke)
+				   *        devStatUnknown (device offline)
+				   */
+				  return {
+					id: `sensor-${theZoneNumber}`,
+					name: theName || 'Unknown Sensor',
+					tags: theTag || 'sensor',
+					state: theState || 'devStatUnknown',
+				  };
+				});
+	  
+				this.consoleLogger('ADT Pulse: Get zone status (via orb) success.', 'log');
+	  
+				deferred.resolve({
+				  action: 'GET_ZONE_STATUS_ORB',
+				  success: true,
+				  info: output,
+				});
+			  }
+			},
+		  );
+		});	
 
 	this.getDeviceStatus = function() { // not tested
 		console.log((new Date()).toLocaleString() + ' Pulse.getDeviceStatus: Getting Device Statuses');
