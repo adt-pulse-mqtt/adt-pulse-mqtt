@@ -6,7 +6,7 @@ var myAlarm = new Pulse(config.pulse_login.username, config.pulse_login.password
 
 // Use mqtt_url option if specified, otherwise build URL using host option
 if (config.mqtt_url) {
-   var client = new mqtt.connect(config.mqtt_url, config.mqtt_options); 
+   var client = new mqtt.connect(config.mqtt_url, config.mqtt_connect_options); 
 }
 else {
    var client = new mqtt.connect("mqtt://"+config.mqtt_host,config.mqtt_connect_options);
@@ -136,7 +136,7 @@ myAlarm.onZoneUpdate(
   function(device) {
 
     var dev_zone_state_topic = zone_state_topic+"/"+device.name+"/state";
-    var devValue = JSON.stringify(device);
+    //var devValue = JSON.stringify(device);
     var sm_dev_zone_state_topic;
 
     // smartthings bridge assumes actionable devices have a topic set with cmd
@@ -147,18 +147,18 @@ myAlarm.onZoneUpdate(
 
     if (smartthings){
       var contactType = "door";
-      var contactValue= (device.status == "devStatOK")? "closed":"open";
+      var contactValue= (device.state == "devStatOK")? "closed":"open";
 
       if (device.tags.includes("motion")) {
         contactType="motion";
-        contactValue = (device.status == "devStatOK")? "inactive":"active";
+        contactValue = (device.states == "devStatOK")? "inactive":"active";
       }
        sm_dev_zone_state_topic=smartthings_topic+"/"+device.name+"/"+contactType+"/cmd";
     }
 
-    if (devices[device.id]==null || device.activityTs!=devices[device.id].activityTs){
-        client.publish(dev_zone_state_topic, devValue, {"retain":false});
-        console.log((new Date()).toLocaleString()+": Pushing  "+dev_zone_state_topic+" to "+devValue);
+    if (devices[device.id]==null || device.timestamp > devices[device.id].timestamp) {
+        client.publish(dev_zone_state_topic, device.state, {"retain":false});
+        console.log((new Date()).toLocaleString()+": Pushing device state: " + device.state+  " to topic " + dev_zone_state_topic);
 
         if (smartthings){
           client.publish(sm_dev_zone_state_topic, contactValue, {"retain":false});
