@@ -269,7 +269,7 @@ module.exports = pulse;
 								id: `sensor-${theZoneNumber}`,
 								name: theName || 'Unknown Sensor',
 								tags: theTag || 'sensor',
-								timestamp: new Date.now();
+								timestamp: new Date.now(),
 								state: theState || 'devStatUnknown',
 							  };
 
