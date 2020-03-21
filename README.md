@@ -5,7 +5,7 @@ Integrates ADT Pulse to Home Assistant. You can also choose to add the ADT Pulse
 SmartApp allows automatic running our Routines upon alarm changing states.
 
 ## Hassio Setup
-Add the repository (https://github.com/haruny/adt-pulse-mqtt/) to Hassio.
+Add the repository (https://github.com/digitalcraig/adt-pulse-mqtt) to Hassio.
 Hit Install. Don't forget to configure `pulse_login` with your ADT Pulse Portal username and password. I recommend using a separate login for Home Assistant use. 
 You'll need an MQTT broker to run this. I'm using Mosquitto broker (https://www.home-assistant.io/addons/mosquitto/).
 
