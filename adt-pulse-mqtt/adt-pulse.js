@@ -228,7 +228,7 @@ module.exports = pulse;
 						const $ = cheerio.load(body);
 						const sensors = $('#orbSensorsList table tr.p_listRow').toArray();
 						// Map values of table to variables
-						const o = _.map(sensors,(sensor) => {
+						const output = _.map(sensors,(sensor) => {
 							const theSensor = cheerio.load(sensor);
 							const theName = theSensor('a.p_deviceNameText').html();
 							const theZone = theSensor('span.p_grayNormalText').html();
@@ -273,8 +273,12 @@ module.exports = pulse;
 
 							});
 
-							console.log((new Date().toLocaleString()) + 'ADT Pulse: Get zone status (via orb) success. Sensors:\n' + o.toLocaleString());
-							/* zoneUpdateCB(o); */
+							console.log((new Date().toLocaleString()) + 'ADT Pulse: Get zone status (via orb) success.');
+							output.forEach(function(obj){
+								s = obj;
+								s.stringify(s);
+								zoneUpdateCB(s);
+							}
         			}
 				}
 		);
