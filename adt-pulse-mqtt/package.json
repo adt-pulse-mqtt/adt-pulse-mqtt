@@ -1,6 +1,6 @@
 {
   "name": "pulse-adt-mqtt",
-  "version": "2.2.11",
+  "version": "2.3.0",
   "description": "Home Assistant ADT Pulse Bridge using MQTT",
   "author": "Craig Leikis",
   "main": "server.js",
