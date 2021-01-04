@@ -5,19 +5,27 @@
   "author": "Craig Leikis",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "npx jasmine"
   },
-   "repository": {
+  "repository": {
     "type": "git",
     "url": "https://github.com/digitalcraig/adt-pulse-mqtt"
   },
   "license": "ISC",
   "dependencies": {
+    "cheerio": "0.22.0",
+    "lodash": "^4.17.15",
     "mqtt": "^2.13.0",
-    "cheerio": "latest",
     "q": "~1.0.1",
-    "request": "latest",
-    "tough-cookie": "^2.3.0",
-    "lodash": "^4.17.15"
+    "request": "2.88.2",
+    "tough-cookie": "^2.3.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-recommended": "^4.1.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1"
   }
 }

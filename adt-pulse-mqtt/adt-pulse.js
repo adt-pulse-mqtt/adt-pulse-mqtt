@@ -1,6 +1,4 @@
 // Forked from https://github.com/kevinmhickey/adt-pulse
-
-var tough = require('tough-cookie');
 var request = require('request');
 var q = require('q');
 var cheerio = require('cheerio');
@@ -15,20 +13,23 @@ var deviceUpdateCB = function () {};
 var zoneUpdateCB = function () {};
 var statusUpdateCB = function () {};
 
-pulse = function(username, password) {
 
-	this.authenticated = false;
-	this.isAuthenticating = false;
-	this.clients = [];
+class pulse {
+	constructor(username, password) {
 
-	this.configure({
-		username: username,
-		password: password
-	});
+		this.authenticated = false;
+		this.isAuthenticating = false;
+		this.clients = [];
 
-	/* heartbeat */
-	var pulseInterval = setInterval(this.sync.bind(this),5000);
-};
+		this.configure({
+			username: username,
+			password: password
+		});
+
+		/* heartbeat */
+		setInterval(this.sync.bind(this), 5000);
+	}
+}
 
 module.exports = pulse;
 
@@ -54,7 +55,8 @@ module.exports = pulse;
 	};
 
 	this.configure = function(options) {
-		for(o in options){
+
+		for(var o in options){
 			this.config[o] = options[o];
 		}
 	};
@@ -81,7 +83,7 @@ module.exports = pulse;
 						'User-Agent': ua
 					},
 				},
-				function(e, hResp, b) {
+				function(e, hResp) {
 					// expecting /myhome/VERSION/access/signin.jsp
 					if (hResp==null){
 							console.log((new Date()).toLocaleString() + ' Pulse: Authentication bad response error:'+JSON.stringify(e));
@@ -110,7 +112,7 @@ module.exports = pulse;
 								password: that.config.password
 							}
 						},
-						function(err, httpResponse, body){
+						function(err, httpResponse){
 							that.isAuthenticating = false;
 							if(err || httpResponse.request.path !== that.config.prefix+that.config.summaryURI){
 								that.authenticated = false;
@@ -125,8 +127,6 @@ module.exports = pulse;
 							}
 						}
 					);
-
-
 				}
 			);
 		}
@@ -186,7 +186,7 @@ module.exports = pulse;
 						if (json != null){
 							console.log((new Date().toLocaleString()) + ' DEBUG: Raw JSON:' + json.stringify());
 							json.items.forEach(function(obj){
-									o = obj;
+									var o = obj;
 									delete o.deprecatedAction;
 									o.status = obj.state.icon;
 									o.statusTxt = obj.state.statusTxt;
@@ -198,13 +198,11 @@ module.exports = pulse;
 							console.log((new Date().toLocaleString())+ ' Pulse: No Zone JSON');
 						}
 					} catch(e) {
-					   console.log((new Date().toLocaleString()) + ' Pulse: Invalid Zone JSON'+ e.stack);
+						console.log((new Date().toLocaleString()) + ' Pulse: Invalid Zone JSON'+ e.stack);
 					}
 				}
-
 			}
 		);
-
 		return deferred.promise;
 	},
 
@@ -240,17 +238,17 @@ module.exports = pulse;
 
 							if (theName && theState !== 'devStatUnknown') {
 								if (theName.includes('Door') || theName.includes('Window')) {
-								  theTag = 'sensor,doorWindow';
+									theTag = 'sensor,doorWindow';
 								} else if (theName.includes('Glass')) {
-								  theTag = 'sensor,glass';
+									theTag = 'sensor,glass';
 								} else if (theName.includes('Motion')) {
-								  theTag = 'sensor,motion';
+									theTag = 'sensor,motion';
 								} else if (theName.includes('Gas')) {
-								  theTag = 'sensor,co';
+									theTag = 'sensor,co';
 								} else if (theName.includes('Smoke') || theName.includes('Heat')) {
-								  theTag = 'sensor,fire';
+									theTag = 'sensor,fire';
 								}
-							  }
+							}
 							/**
 							 * Expected output.
 							 *
@@ -265,7 +263,7 @@ module.exports = pulse;
 							 *        devStatAlarm (detected CO/Smoke)
 							 *        devStatUnknown (device offline)
 							 */
-							timestamp = Math.floor(Date.now() / 1000) // timetamp in seconds
+							var timestamp = Math.floor(Date.now() / 1000) // timetamp in seconds
 
 							return {
 								id: `sensor-${theZoneNumber}`,
@@ -273,20 +271,19 @@ module.exports = pulse;
 								tags: theTag || 'sensor',
 								timestamp: timestamp,
 								state: theState || 'devStatUnknown',
-							  };
+							};
 
-							});
+						});
 
 							console.log((new Date().toLocaleString()) + 'ADT Pulse: Get zone status (via orb) success.');
 							output.forEach(function(obj){
-								s = obj;
+								var s = obj;
 								console.log((new Date().toLocaleString()) + ' Sensor: ' + s.id + ' Name: ' + s.name + ' Tags: ' + s.tags + ' State ' + s.state);
 								zoneUpdateCB(s);
 							})
-        			}
+					}
 				}
-		);
-
+			);
 		return deferred.promise;
 	},
 
@@ -303,8 +300,8 @@ module.exports = pulse;
 			},
 			function(err, httpResponse, body) {
 					try{
-					$ = cheerio.load(body);
-					$('tr tr.p_listRow').each(function(el){
+					var $ = cheerio.load(body);
+					$('tr tr.p_listRow').each(function(){
 						try {
 							deviceUpdateCB({
 								name: $(this).find('td').eq(2).text(),
@@ -323,15 +320,12 @@ module.exports = pulse;
 			}
 		);
 	},
-
 	this.onDeviceUpdate = function (updateCallback) {
 		deviceUpdateCB = updateCallback;
 	},
-
 	this.onZoneUpdate = function (updateCallback) {
 		zoneUpdateCB = updateCallback;
 	},
-
 	this.onStatusUpdate = function (updateCallback) {
 		statusUpdateCB = updateCallback;
 	},
@@ -357,7 +351,7 @@ module.exports = pulse;
 					value: device.state == 0 ? 'Off' : 'On'
 				}
 			},
-			function(err, request, body){
+			function(err){
 				if(err){
 					console.log((new Date()).toLocaleString() + ' Pulse: Device State Failure');
 					deferred.reject()
@@ -367,7 +361,6 @@ module.exports = pulse;
 				}
 			}
 		);
-
 		return deferred.promise;
 	},
 
@@ -391,10 +384,9 @@ module.exports = pulse;
 					deferred.reject();
 					return false;
 				}
-
 				//parse the html
 				try{
-					$ = cheerio.load(body);
+					var $ = cheerio.load(body);
 					statusUpdateCB({ status: $('#divOrbTextSummary span').text()});
 					deferred.resolve();
 				}
@@ -405,9 +397,7 @@ module.exports = pulse;
 				}
 			}
 		);
-
 		return deferred.promise;
-
 	},
 
 	this.setAlarmState = function (action) {
@@ -458,7 +448,7 @@ module.exports = pulse;
 					if (action.newstate!="disarm" && action.isForced!=true && body.includes("Some sensors are open or reporting motion")){
 						console.log((new Date()).toLocaleString() + ' Pulse setAlarmState Some sensors are open. will force the alarm state');
 
-						sat = body.match(/sat\=(.+?)&href/)[1];
+						sat = body.match(/sat=(.+?)&href/)[1];
 						console.log((new Date()).toLocaleString() + ' Pulse setAlarmState New SAT ::'+ sat + "::");
 						action.isForced=true;
 						that.setAlarmState(action);
@@ -478,9 +468,7 @@ module.exports = pulse;
 
 			}
 		);
-
 		return deferred.promise;
-
 	}
 
 	this.pulse = function(uid) {
@@ -494,7 +482,6 @@ module.exports = pulse;
 			this.clients.push(uid);
 			this.sync();
 		}
-
 	}
 
 	this.sync = function () {
@@ -515,17 +502,13 @@ module.exports = pulse;
 						that.authenticated = false;
 						console.log((new Date()).toLocaleString() + ' Pulse.Sync: Sync Failed');
 					} else if (lastsynckey != body|| "1-0-0" == body) {
-					 	lastsynckey = body;
-					 	that.updateAll.call(that);
-					 }
+						lastsynckey = body;
+						that.updateAll.call(that);
+					}
 				})
 			})
-
 		} else {
 				console.log((new Date()).toLocaleString() + ' Pulse.Sync: Sync stuck?');
-
 		}
-
 	}
-
 }).call(pulse.prototype);
