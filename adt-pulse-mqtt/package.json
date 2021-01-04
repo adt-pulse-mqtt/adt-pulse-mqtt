@@ -6,7 +6,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "npx jasmine"
+    "test": "npx  nyc --reporter=html --reporter=text mocha",
+    "coverage": "npx nyc report --reporter=text-lcov | npx coveralls"
   },
   "repository": {
     "type": "git",
@@ -22,10 +23,15 @@
     "tough-cookie": "^2.3.0"
   },
   "devDependencies": {
+    "chai": "^4.2.0",
+    "coveralls": "^3.1.0",
+    "nyc": "^15.1.0",
     "eslint": "^6.8.0",
     "eslint-config-recommended": "^4.1.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1"
+    "eslint-plugin-promise": "^4.2.1",
+    "mocha": "^8.2.1",
+    "rewire": "^5.0.0"
   }
 }
