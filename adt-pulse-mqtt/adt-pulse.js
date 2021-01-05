@@ -13,23 +13,20 @@ var deviceUpdateCB = function () {};
 var zoneUpdateCB = function () {};
 var statusUpdateCB = function () {};
 
+const pulse = function(username, password) {
 
-class pulse {
-	constructor(username, password) {
+	this.authenticated = false;
+	this.isAuthenticating = false;
+	this.clients = [];
 
-		this.authenticated = false;
-		this.isAuthenticating = false;
-		this.clients = [];
+	this.configure({
+		username: username,
+		password: password
+	});
 
-		this.configure({
-			username: username,
-			password: password
-		});
-
-		/* heartbeat */
-		setInterval(this.sync.bind(this), 5000);
-	}
-}
+	/* heartbeat */
+	this.pulseInterval = setInterval(this.sync.bind(this),5000);
+};
 
 module.exports = pulse;
 
