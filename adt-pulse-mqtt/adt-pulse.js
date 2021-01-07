@@ -95,7 +95,7 @@ module.exports = pulse;
 					console.log((new Date()).toLocaleString() + ' Pulse: Authentication Page Version: '+uriPart);
 					that.config.prefix= '/myhome/'+uriPart;
 					console.log((new Date()).toLocaleString() + ' Pulse: Authentication New URL Prefix '+ that.config.prefix);
-					console.log((new Date()).toLocaleString() + ' Pulse: Authentication  Calling '+ that.config.baseUrl+that.config.prefix+that.config.authURI);
+					console.log((new Date()).toLocaleString() + ' Pulse: Authentication Calling '+ that.config.baseUrl+that.config.prefix+that.config.authURI);
 					request.post(that.config.baseUrl+that.config.prefix+that.config.authURI,
 						{
 							followAllRedirects: true,
@@ -114,7 +114,7 @@ module.exports = pulse;
 							if(err || httpResponse.request.path !== that.config.prefix+that.config.summaryURI){
 								that.authenticated = false;
 								console.log((new Date()).toLocaleString() + ' Pulse: Authentication Failed');
-								console.log((new Date()).toLocaleString() + ' Pulse: httpResponse:' + httpResponse);
+								console.log((new Date()).toLocaleString() + ' Pulse: httpResponse:' + JSON.stringify(httpResponse));
 								deferred.reject();
 							} else {
 								that.authenticated = true;
@@ -127,9 +127,6 @@ module.exports = pulse;
 				}
 			);
 		}
-
-
-
 		return deferred.promise
 	},
 
