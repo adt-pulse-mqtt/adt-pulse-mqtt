@@ -6,6 +6,7 @@ before_script:
   - npm install -g coveralls
   - cd adt-pulse-mqtt
 script:
+  - npm install 
   - npm test
 after_success:
   - nyc report --reporter=text-lcov | coveralls
