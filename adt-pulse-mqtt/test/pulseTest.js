@@ -10,11 +10,10 @@ const fs = require('fs');
 chai.use(spies);
 let expect = chai.expect;
 
-// Rewire adt-pulse module
-let pulse = rewire('../adt-pulse.js');
-
 describe('ADT Pulse Initialization Test',function() {
   // Setup
+  // Rewire adt-pulse module
+  let pulse = rewire('../adt-pulse.js');  
   let testAlarm = new pulse("test","password");
 
   // Evaluate
@@ -37,7 +36,7 @@ describe('ADT Pulse Initialization Test',function() {
   it("Should have summaryURI property set", () => expect(testAlarm.config).to.have.property("summaryURI"));
   it("Should have summaryURI set to /summary/summary.jsp",  () => expect(testAlarm.config.summaryURI).equals("/summary/summary.jsp"));
 
-  describe('ADT Pulse Login Successful Test', function() { 
+  describe('ADT Pulse Login Test', function() { 
     // Setup
 
       nock("https://portal.adtpulse.com")
@@ -61,11 +60,50 @@ describe('ADT Pulse Initialization Test',function() {
       .get('/myhome/20.0.0-233/summary/summary.jsp')
       .reply(200,"<html></html>");
       
-      testAlarm.login().then(it("Should set Uripart", function() {
+      testAlarm.login().then(it("Should set prefix", function() {
         expect(testAlarm.config.prefix).equals("/myhome/20.0.0-233");
+      }));
+
+      testAlarm.login().then(it("Should be authenticated", function() {
+        expect(testAlarm.config.prefix).equals("/myhome/20.0.0-233");
+        expect(testAlarm.authenticated).is.true;
       }));
   });
 
   // Clean up
   clearInterval(testAlarm.pulseInterval); // Stop executing sync
+});
+
+describe('ADT Pulse Update tests',function() {
+  // Setup
+  let pulse = rewire('../adt-pulse.js');
+  pulse.__set__("authenticated",true);
+  
+  var alarm;
+
+  nock("https://portal.adtpulse.com")
+  .get('/myhome/13.0.0-153/summary/summary.jsp')
+  .reply(200, ()=> {
+    try {  
+      var page = fs.readFileSync('./test/pages/summaryalarmstatus.jsp', 'utf8');
+      return page.toString();
+    } catch(e) {
+      console.log('Error:', e.stack);
+    }
+  });
+
+  // Instantiate alarm object
+  let testAlarm = new pulse("test","password");
+  // Set Callbacks
+  testAlarm.onStatusUpdate(
+    function(device) {
+      alarm = device;
+    });
+  
+  testAlarm.getAlarmStatus().then(it("Should return status of Disarmed to statusUpdateCB", function() {
+    expect(alarm.status).includes("Disarmed");
+  })); 
+
+ // Clean up
+ clearInterval(testAlarm.pulseInterval); // Stop executing sync
 });
