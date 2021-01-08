@@ -80,12 +80,22 @@ describe('ADT Pulse Update tests',function() {
   pulse.__set__("authenticated",true);
   
   var alarm;
+  var devices = 'None';
 
   nock("https://portal.adtpulse.com")
   .get('/myhome/13.0.0-153/summary/summary.jsp')
-  .reply(200, ()=> {
+  .reply(200, () => {
     try {  
       var page = fs.readFileSync('./test/pages/summaryalarmstatus.jsp', 'utf8');
+      return page.toString();
+    } catch(e) {
+      console.log('Error:', e.stack);
+    }
+  })
+  .get('/myhome/13.0.0-153/ajax/currentStates.jsp')
+  .reply(200, () => {
+    try {  
+      var page = fs.readFileSync('./test/pages/otherdevices.jsp', 'utf8');
       return page.toString();
     } catch(e) {
       console.log('Error:', e.stack);
@@ -99,10 +109,18 @@ describe('ADT Pulse Update tests',function() {
     function(device) {
       alarm = device;
     });
-  
+  testAlarm.onDeviceUpdate(
+    function(device) {
+        devices = device;
+    });
+
   testAlarm.getAlarmStatus().then(it("Should return status of Disarmed to statusUpdateCB", function() {
     expect(alarm.status).includes("Disarmed");
   })); 
+
+  testAlarm.getDeviceStatus().then(it("Should find no devices", function() {
+    expect(devices).equals("None");
+  }));
 
  // Clean up
  clearInterval(testAlarm.pulseInterval); // Stop executing sync
