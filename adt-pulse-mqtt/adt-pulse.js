@@ -283,7 +283,7 @@ module.exports = pulse;
 
 	this.getDeviceStatus = function() { // not tested
 		console.log((new Date()).toLocaleString() + ' Pulse.getDeviceStatus: Getting Device Statuses');
-
+		var deferred = q.defer();
 		request(
 			{
 				url: this.config.baseUrl+this.config.prefix+this.config.otherStatusURI,
@@ -313,6 +313,7 @@ module.exports = pulse;
 				}
 			}
 		);
+		return deferred.promise;
 	},
 	this.onDeviceUpdate = function (updateCallback) {
 		deviceUpdateCB = updateCallback;
