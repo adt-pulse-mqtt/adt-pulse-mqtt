@@ -160,6 +160,7 @@ module.exports = pulse;
 		});
 	}
 
+	// getZoneStatus was deprecated for getStatusORB due to breaking change on ADT Pulse Portal
 	this.getZoneStatus = function() {
 		console.log((new Date()).toLocaleString() + ' Pulse.getZoneStatus: Getting Zone Statuses');
 		var deferred = q.defer();
