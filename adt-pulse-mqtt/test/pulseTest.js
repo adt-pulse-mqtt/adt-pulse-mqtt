@@ -35,6 +35,8 @@ describe('ADT Pulse Initialization Test',function() {
   it("Should have authURI set to /access/signin.jsp?e=n&e=n&&partner=adt",  () => expect(testAlarm.config.authURI).equals("/access/signin.jsp?e=n&e=n&&partner=adt"));
   it("Should have summaryURI property set", () => expect(testAlarm.config).to.have.property("summaryURI"));
   it("Should have summaryURI set to /summary/summary.jsp",  () => expect(testAlarm.config.summaryURI).equals("/summary/summary.jsp"));
+  it("Should have sensorOrbURI property set", () => expect(testAlarm.config).to.have.property("sensorOrbURI"));
+  it("Should have sensorOrbURI set to /ajax/orb.jsp",  () => expect(testAlarm.config.sensorOrbURI).equals("/ajax/orb.jsp"));
 
   describe('ADT Pulse Login Test', function() { 
     // Setup
@@ -74,6 +76,7 @@ describe('ADT Pulse Initialization Test',function() {
   clearInterval(testAlarm.pulseInterval); // Stop executing sync
 });
 
+// Test udpate functions called by updateAll()
 describe('ADT Pulse Update tests',function() {
   // Setup
   let pulse = rewire('../adt-pulse.js');
@@ -81,6 +84,7 @@ describe('ADT Pulse Update tests',function() {
   
   var alarm;
   var devices = 'None';
+  var zones = [];
 
   nock("https://portal.adtpulse.com")
   .get('/myhome/13.0.0-153/summary/summary.jsp')
@@ -100,19 +104,33 @@ describe('ADT Pulse Update tests',function() {
     } catch(e) {
       console.log('Error:', e.stack);
     }
+  })
+  .get('/myhome/13.0.0-153/ajax/orb.jsp')
+  .reply(200, () => {
+    try {  
+      var page = fs.readFileSync('./test/pages/zonestatus.jsp', 'utf8');
+      return page.toString();
+    } catch(e) {
+      console.log('Error:', e.stack);
+    }
   });
 
   // Instantiate alarm object
   let testAlarm = new pulse("test","password");
   // Set Callbacks
   testAlarm.onStatusUpdate(
-    function(device) {
-      alarm = device;
+    function(alarmStatus) {
+      alarm = alarmStatus;
     });
   testAlarm.onDeviceUpdate(
     function(device) {
         devices = device;
     });
+  testAlarm.onZoneUpdate(
+    function(zone) {
+      zones.push(zone);
+    }
+  );
 
   testAlarm.getAlarmStatus().then(it("Should return status of Disarmed to statusUpdateCB", function() {
     expect(alarm.status).includes("Disarmed");
@@ -120,6 +138,13 @@ describe('ADT Pulse Update tests',function() {
 
   testAlarm.getDeviceStatus().then(it("Should find no devices", function() {
     expect(devices).equals("None");
+  }));
+
+  testAlarm.getZoneStatusOrb().then(it("Should return the status of zones", function() {
+    expect(zones).has.a.lengthOf(7);
+    expect(zones[0].id).contains("sensor");
+    expect(zones[0].name).equals("BACK DOOR");
+    expect(zones[0].state).equals("devStatOK");
   }));
 
  // Clean up
