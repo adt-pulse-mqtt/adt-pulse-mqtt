@@ -222,3 +222,26 @@ describe('ADT Pulse Arm Away Test without forcing', function() {
    }); 
 });
 
+describe('ADT Pulse Force Arm Away Test', function() { 
+
+  let setAlarm;
+
+  let pulse = rewire('../adt-pulse.js');
+  pulse.__set__("authenticated","true");
+  let testAlarm = new pulse("test","password");
+  // Prevent executing sync
+  clearInterval(testAlarm.pulseInterval);
+
+  nock('https://portal.adtpulse.com')
+  .get('/myhome/13.0.0-153/quickcontrol/armDisarm.jsp?href=rest/adt/ui/client/security/setArmState&armstate=disarmed&arm=away')
+  .reply(200,'Armed stay. Some sensors are open or reporting motion. sat=1234&href=')
+  .get('/myhome/13.0.0-153/quickcontrol/serv/RunRRACommand?sat=1234&href=rest/adt/ui/client/security/setForceArm&armstate=forcearm&arm=away')
+  .reply(200, "Armed away - forced");
+
+   // Test arm away
+   setAlarm = {'newstate':'away','prev_state':'disarmed', "isForced":"false"}
+   it("Should arm the alarm to stay", function() {
+     return expect(testAlarm.setAlarmState(setAlarm)).to.eventually.be.fulfilled;
+   }); 
+});
+
