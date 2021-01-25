@@ -423,7 +423,7 @@ module.exports = pulse;
 			url= this.config.baseUrl+this.config.prefix+this.config.disarmURI+'&armstate='+ action.prev_state +"&arm=off";
 		}
 
-		console.log((new Date()).toLocaleString() + ' Pulse.setAlarmState calling the urls:' + url);
+		console.log((new Date()).toLocaleString() + ' Pulse.setAlarmState calling the url :' + url);
 
 		request(
 			{
@@ -436,7 +436,7 @@ module.exports = pulse;
 			},
 			function(err, httpResponse, body) {
 				if(err){
-					console.log((new Date()).toLocaleString() + ' Pulse setAlarmState Failed::'+ body + "::");
+					console.log((new Date()).toLocaleString() + ' Pulse setAlarmState Failed with: '+ body );
 					deferred.reject();
 				} else {
 					// when arming check if Some sensors are open or reporting motion
