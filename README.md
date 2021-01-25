@@ -1,4 +1,4 @@
-[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/digitalcraig/adt-pulse-mqtt) 
+[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/digitalcraig/adt-pulse-mqtt) [![Build Status](https://travis-ci.com/digitalcraig/adt-pulse-mqtt.svg?branch=master)](https://travis-ci.com/digitalcraig/adt-pulse-mqtt) [![Coverage Status](https://coveralls.io/repos/github/digitalcraig/adt-pulse-mqtt/badge.svg)](https://coveralls.io/github/digitalcraig/adt-pulse-mqtt) 
 
 # adt-pulse-mqtt
 ADT Pulse bridge for Home Assistant using MQTT. 

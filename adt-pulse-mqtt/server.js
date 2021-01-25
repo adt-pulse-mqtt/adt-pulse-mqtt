@@ -1,15 +1,16 @@
 const Pulse = require('./adt-pulse.js');
 const mqtt = require('mqtt');
 var config = require('/data/options.json');
+var client;
 
 var myAlarm = new Pulse(config.pulse_login.username, config.pulse_login.password);
 
 // Use mqtt_url option if specified, otherwise build URL using host option
 if (config.mqtt_url) {
-   var client = new mqtt.connect(config.mqtt_url, config.mqtt_connect_options); 
+   client = new mqtt.connect(config.mqtt_url, config.mqtt_connect_options); 
 }
 else {
-   var client = new mqtt.connect("mqtt://"+config.mqtt_host,config.mqtt_connect_options);
+   client = new mqtt.connect("mqtt://"+config.mqtt_host,config.mqtt_connect_options);
 }
 
 var alarm_state_topic = config.alarm_state_topic;
@@ -127,7 +128,7 @@ myAlarm.onStatusUpdate(
            console.log((new Date()).toLocaleString()+": Pushing alarm state to smartthings"+sm_alarm_topic);
            client.publish(sm_alarm_topic, sm_alarm_value,{"retain":false});
          }
-		  alarm_last_state = mqtt_state;
+        alarm_last_state = mqtt_state;
       }
   }
 );
@@ -164,7 +165,7 @@ myAlarm.onZoneUpdate(
           client.publish(sm_dev_zone_state_topic, contactValue, {"retain":false});
           console.log((new Date()).toLocaleString()+": Pushing to smartthings: "+sm_dev_zone_state_topic+" to "+contactValue);
         }
-	  }
+    }
       devices[device.id] = device;
   }
 );
