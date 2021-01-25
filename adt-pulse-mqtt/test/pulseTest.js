@@ -222,7 +222,7 @@ describe('ADT Pulse Arm Away Test without forcing', function() {
    }); 
 });
 
-describe('ADT Pulse Force Arm Away Test', function() { 
+describe('ADT Pulse Forced Arm Away Test', function() { 
 
   let setAlarm;
 

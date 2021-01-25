@@ -158,47 +158,6 @@ module.exports = pulse;
 			that.getDeviceStatus();
 			that.getZoneStatusOrb();
 		});
-	}
-
-	// getZoneStatus was deprecated for getStatusORB due to breaking change on ADT Pulse Portal
-	this.getZoneStatus = function() {
-		console.log((new Date()).toLocaleString() + ' Pulse.getZoneStatus: Getting Zone Statuses');
-		var deferred = q.defer();
-		request(
-			{
-				url: this.config.baseUrl+this.config.prefix+this.config.sensorURI,
-				jar: j,
-				headers: {
-					'User-Agent': ua
-				},
-			},
-			function(err, httpResponse, body) {
-				if(err){
-					console.log((new Date().toLocaleString()) + ' Pulse.getZoneStatus: Zone JSON Failed');
-				} else {
-					try {
-						var json = JSON.parse(body.trim());
-						if (json != null){
-							console.log((new Date().toLocaleString()) + ' DEBUG: Raw JSON:' + json.stringify());
-							json.items.forEach(function(obj){
-									var o = obj;
-									delete o.deprecatedAction;
-									o.status = obj.state.icon;
-									o.statusTxt = obj.state.statusTxt;
-									o.activityTs = obj.state.activityTs;
-									delete o.state;
-								zoneUpdateCB(o);
-							})
-						} else {
-							console.log((new Date().toLocaleString())+ ' Pulse: No Zone JSON');
-						}
-					} catch(e) {
-						console.log((new Date().toLocaleString()) + ' Pulse: Invalid Zone JSON'+ e.stack);
-					}
-				}
-			}
-		);
-		return deferred.promise;
 	},
 
 	this.getZoneStatusOrb = function() {
