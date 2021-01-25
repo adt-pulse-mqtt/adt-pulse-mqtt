@@ -6,7 +6,7 @@ const chaiAsPromised = require("chai-as-promised");
 const rewire = require('rewire');
 const nock = require('nock');
 const fs = require('fs');
-const { stringify } = require('querystring');
+//const { stringify } = require('querystring');
 
 // Set up chai, plugins
 chai.use(spies);
@@ -159,7 +159,7 @@ describe('ADT Pulse Update tests',function() {
   }));
 });
 
-describe('ADT Pulse Set Alarm Tests', function() { 
+describe('ADT Pulse Disarm Test', function() { 
 
   let setAlarm;
 
@@ -175,8 +175,29 @@ describe('ADT Pulse Set Alarm Tests', function() {
 
   // Test disarming
   setAlarm = {'newstate':'disarm','prev_state':'stay', "isForced":"false"}
-  it("Should return Disarmed", function() {
+  it("Should Disarmed", function() {
     return expect(testAlarm.setAlarmState(setAlarm)).to.eventually.be.fulfilled;
   }); 
+});
+
+describe('ADT Pulse Arm Stay Test', function() { 
+
+  let setAlarm;
+
+  let pulse = rewire('../adt-pulse.js');
+  pulse.__set__("authenticated","true");
+  let testAlarm = new pulse("test","password");
+  // Prevent executing sync
+  clearInterval(testAlarm.pulseInterval);
+
+  nock('https://portal.adtpulse.com')
+  .get('/myhome/13.0.0-153/quickcontrol/armDisarm.jsp?href=rest/adt/ui/client/security/setArmState&armstate=disarmed&arm=stay')
+  .reply(200,'Disarmed');
+
+   // Test arm stay
+   setAlarm = {'newstate':'stay','prev_state':'disarmed', "isForced":"false"}
+   it("Should arm stay", function() {
+     return expect(testAlarm.setAlarmState(setAlarm)).to.eventually.be.fulfilled;
+   }); 
 });
 
