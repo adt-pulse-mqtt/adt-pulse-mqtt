@@ -175,7 +175,7 @@ describe('ADT Pulse Disarm Test', function() {
 
   // Test disarming
   setAlarm = {'newstate':'disarm','prev_state':'stay', "isForced":"false"}
-  it("Should Disarmed", function() {
+  it("Should disarmed alarm", function() {
     return expect(testAlarm.setAlarmState(setAlarm)).to.eventually.be.fulfilled;
   }); 
 });
@@ -192,11 +192,11 @@ describe('ADT Pulse Arm Stay Test', function() {
 
   nock('https://portal.adtpulse.com')
   .get('/myhome/13.0.0-153/quickcontrol/armDisarm.jsp?href=rest/adt/ui/client/security/setArmState&armstate=disarmed&arm=stay')
-  .reply(200,'Disarmed');
+  .reply(200,'Armed stay');
 
    // Test arm stay
    setAlarm = {'newstate':'stay','prev_state':'disarmed', "isForced":"false"}
-   it("Should arm stay", function() {
+   it("Should arm the alarm to stay", function() {
      return expect(testAlarm.setAlarmState(setAlarm)).to.eventually.be.fulfilled;
    }); 
 });
