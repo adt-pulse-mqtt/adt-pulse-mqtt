@@ -15,7 +15,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "cheerio": "0.22.0",
+    "cheerio": "1.0.0-rc.3",
     "lodash": "^4.17.15",
     "mqtt": "^2.13.0",
     "q": "~1.0.1",
