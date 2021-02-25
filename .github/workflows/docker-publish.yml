@@ -59,9 +59,10 @@ jobs:
         id: docker_build
         uses: docker/build-push-action@v2
         with:
+          name: adtpulsemqtt/adt-pulse-mqtt
           context: ./adt-pulse-mqtt/
           file: ./adt-pulse-mqtt/Dockerfile
           push: true
-          tags: adtpulsemqtt/adt-pulse-mqtt:latest
+          tags_semver: true
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
