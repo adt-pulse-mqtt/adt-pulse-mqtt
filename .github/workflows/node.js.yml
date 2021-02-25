@@ -27,6 +27,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm install -g nyc
     - run: npm install -g coveralls
-    - run: cd adt-pulse-mqtt
     - run: npm install
+      working-directory: adt-pulse-mqtt
     - run: npm test
+      working-directory: adt-pulse-mqtt
