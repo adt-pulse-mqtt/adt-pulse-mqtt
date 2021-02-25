@@ -34,6 +34,7 @@ jobs:
           else
             docker build . --file Dockerfile
           fi
+        working-directory: adt-pulse-mqtt
 
   # Push image to GitHub Packages.
   # See also https://docs.docker.com/docker-hub/builds/
@@ -49,7 +50,7 @@ jobs:
 
       - name: Build image
         run: docker build . --file Dockerfile --tag $IMAGE_NAME
-
+        working-directory: adt-pulse-mqtt
       - name: Log into registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
 
@@ -74,3 +75,4 @@ jobs:
 
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
+        working-directory: adt-pulse-mqtt
