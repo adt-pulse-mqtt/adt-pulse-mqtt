@@ -3,7 +3,7 @@
   "version": "2.3.2",
   "slug": "adtpulsemqtt",
   "description": "ADT Pulse Bridge using MQTT",
-  "url":"https://github.com/digitalcraig/adt-pulse-mqtt",
+  "url":"https://github.com/adt-pulse-mqtt/adt-pulse-mqtt",
   "startup": "application",
   "boot": "auto",
   "host_network" : false,

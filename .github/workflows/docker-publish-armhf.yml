@@ -50,8 +50,7 @@ jobs:
         with:
           # list of Docker images to use as base name for tags
           images: |
-            adtpulsemqtt/adt-pulse-mqtt
-            adtpulsemqtt/adt-pulse-mqtt-amd64
+            adtpulsemqtt/adt-pulse-mqtt-armhf
           # add git short SHA as Docker tag
           tag-sha: true
           tag-semver: |
@@ -72,7 +71,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./adt-pulse-mqtt/
-          file: ./adt-pulse-mqtt/Dockerfile
+          file: ./adt-pulse-mqtt/Dockerfile-armhf
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
