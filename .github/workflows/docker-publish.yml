@@ -75,7 +75,6 @@ jobs:
         id: docker_build
         uses: docker/build-push-action@v2
         with:
-          name: adtpulsemqtt/adt-pulse-mqtt
           context: ./adt-pulse-mqtt/
           file: ./adt-pulse-mqtt/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
