@@ -55,8 +55,11 @@ jobs:
           # list of Docker images to use as base name for tags
           images: |
             adtpulsemqtt/adt-pulse-mqtt
+            adtpulsemqtt/adt-pulse-mqtt-amd64
           # add git short SHA as Docker tag
           tag-sha: true
+          tag-semver: |
+            {{version}}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -68,7 +71,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      - name: Build and push
+      - name: Build and push default
         id: docker_build
         uses: docker/build-push-action@v2
         with:
