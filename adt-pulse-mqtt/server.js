@@ -152,7 +152,7 @@ myAlarm.onZoneUpdate(
 
       if (device.tags.includes("motion")) {
         contactType="motion";
-        contactValue = (device.states == "devStatOK")? "inactive":"active";
+        contactValue = (device.state == "devStatOK")? "inactive":"active";
       }
        sm_dev_zone_state_topic=smartthings_topic+"/"+device.name+"/"+contactType+"/cmd";
     }
