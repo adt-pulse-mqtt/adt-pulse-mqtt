@@ -1,26 +1,21 @@
-ARG BUILD_FROM=arm32v6/alpine:3.6
+ARG BUILD_FROM=balenalib/armv7hf-alpine:3.13-run
 FROM $BUILD_FROM
 
 ENV LANG C.UTF-8
 ENV NODE_ENV production
 ENV QEMU_EXECVE 1
 
-COPY armhf/qemu-arm-static /usr/bin
-COPY armhf/resin-xbuild /usr/bin
-
-RUN [ "/usr/bin/qemu-arm-static", "/bin/sh", "-c", "ln -s /usr/bin/resin-xbuild /usr/bin/cross-build-start; ln -s /usr/bin/resin-xbuild /usr/bin/cross-build-end; ln /bin/sh /bin/sh.real" ]
-
 RUN [ "cross-build-start" ]
 
 # Install node and npm (Node 14 LTS)
 RUN apk add --update nodejs=~14
-RUN apk add --update nodejs-npm=~14
+RUN apk add --update npm=~14
 
 WORKDIR /usr/src/app
 
 # Install app dependencies
 COPY package.json .
-RUN npm install
+RUN /usr/bin/npm install
 
 # Bundle app source
 COPY . .
