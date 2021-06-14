@@ -12,9 +12,9 @@ RUN [ "/usr/bin/qemu-arm-static", "/bin/sh", "-c", "ln -s /usr/bin/resin-xbuild 
 
 RUN [ "cross-build-start" ]
 
-# Install node and npm
-RUN apk add --update nodejs
-RUN apk add --update nodejs-npm
+# Install node and npm (Node 14 LTS)
+RUN apk add --update nodejs=~14
+RUN apk add --update nodejs-npm=~14
 
 WORKDIR /usr/src/app
 

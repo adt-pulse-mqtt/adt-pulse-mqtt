@@ -4,9 +4,9 @@ FROM $BUILD_FROM
 ENV LANG C.UTF-8
 ENV NODE_ENV production
 
-# Install node and npm
-RUN apk add --update nodejs
-RUN apk add --update nodejs-npm
+# Install node and npm (Node 14 LTS)
+RUN apk add --update nodejs=~14
+RUN apk add --update nodejs-npm=~14
 
 WORKDIR /usr/src/app
 
