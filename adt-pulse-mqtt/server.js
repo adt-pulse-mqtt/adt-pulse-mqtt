@@ -3,7 +3,7 @@ const mqtt = require('mqtt');
 var config = require('/data/options.json');
 var client;
 
-var myAlarm = new Pulse(config.pulse_login.username, config.pulse_login.password);
+var myAlarm = new Pulse(config.pulse_login.username, config.pulse_login.password, config.pulse_login.fingerprint);
 
 // Use mqtt_url option if specified, otherwise build URL using host option
 if (config.mqtt_url) {

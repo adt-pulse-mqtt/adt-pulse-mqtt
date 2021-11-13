@@ -17,7 +17,7 @@ describe("ADT Pulse Initilization Tests",function() {
   // Setup
   // Rewire adt-pulse module
   let pulse = rewire('../adt-pulse.js');  
-  let testAlarm = new pulse("test","password");
+  let testAlarm = new pulse("test","password","123456789");
   // Prevent executing sync
   clearInterval(testAlarm.pulseInterval);
 
@@ -29,6 +29,7 @@ describe("ADT Pulse Initilization Tests",function() {
   it("Should have a Config property set", () => expect(testAlarm).to.have.property("config"));
   it("Should have a username of test", () => expect(testAlarm.config["username"]).is.equals("test"));
   it("Should have a password of password", () => expect(testAlarm.config["password"]).is.equals("password"));
+  it("Should have a device fingerprint", () => expect(testAlarm.config["fingerprint"]).is.equals("123456789"));
 
   // Add config properties as they are used
   it("Should have baseUrl set", () => expect(testAlarm.config).to.have.property("baseUrl"));
@@ -50,14 +51,14 @@ describe("ADT Pulse Initilization Tests",function() {
     // Setup
     // Rewire adt-pulse module
     let pulse = rewire('../adt-pulse.js');  
-    let testAlarm = new pulse("test","password");
+    let testAlarm = new pulse("test","password","123456789");
     // Prevent executing sync
     clearInterval(testAlarm.pulseInterval);
 
     nock("https://portal.adtpulse.com")
     .get('/')
-    .reply(302,"<html></html>", {"Location":"https://portal.adtpulse.com/myhome/20.0.0-233/access/signin.jsp"})
-    .get('/myhome/20.0.0-233/access/signin.jsp')
+    .reply(302,"<html></html>", {"Location":"https://portal.adtpulse.com/myhome/22.0.0-233/access/signin.jsp"})
+    .get('/myhome/22.0.0-233/access/signin.jsp')
     .reply(200, ()=> {
       try {  
         var page = fs.readFileSync('./test/pages/signin.jsp', 'utf8');
@@ -66,21 +67,22 @@ describe("ADT Pulse Initilization Tests",function() {
         console.log('Error:', e.stack);
       }
     })
-    .post('/myhome/20.0.0-233/access/signin.jsp', {
+    .post('/myhome/22.0.0-233/access/signin.jsp', {
       username: 'test',
       password: 'password',
+      fingerprint: '123456789'
     })
     .query(true)
-    .reply(301,"<html></html>", {"Location":"https://portal.adtpulse.com/myhome/20.0.0-233/summary/summary.jsp"})
-    .get('/myhome/20.0.0-233/summary/summary.jsp')
+    .reply(301,"<html></html>", {"Location":"https://portal.adtpulse.com/myhome/22.0.0-233/summary/summary.jsp"})
+    .get('/myhome/22.0.0-233/summary/summary.jsp')
     .reply(200,"<html></html>");
     
     testAlarm.login().then(it("Should set prefix", function() {
-      expect(testAlarm.config.prefix).equals("/myhome/20.0.0-233");
+      expect(testAlarm.config.prefix).equals("/myhome/22.0.0-233");
     }));
 
     testAlarm.login().then(it("Should be authenticated", function() {
-      expect(testAlarm.config.prefix).equals("/myhome/20.0.0-233");
+      expect(testAlarm.config.prefix).equals("/myhome/22.0.0-233");
       expect(testAlarm.authenticated).is.true;
     }));
 });
@@ -96,7 +98,7 @@ describe('ADT Pulse Update tests',function() {
   // Rewire adt-pulse module
   let pulse = rewire('../adt-pulse.js');
   pulse.__set__("authenticated","true");
-  let testAlarm = new pulse("test","password");
+  let testAlarm = new pulse("test","password","123456789");
   // Prevent executing sync
   clearInterval(testAlarm.pulseInterval);
   // Set Callbacks
