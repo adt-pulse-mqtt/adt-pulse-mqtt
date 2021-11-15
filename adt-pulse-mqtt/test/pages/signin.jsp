@@ -5,9 +5,10 @@
 
 
 
+<script type="text/javascript" src="/myhome/22.0.0-233/icjs/mobile-detection.js"></script>
 
-<script type="text/javascript" src="/myhome/20.0.0-244/icjs/js-general_en_US.js"></script>
-<script type="text/javascript" src="/myhome/20.0.0-244/icjs/js-access_en_US.js"></script>   
+<script type="text/javascript" src="/myhome/22.0.0-233/icjs/js-general_en_US.js"></script>
+<script type="text/javascript" src="/myhome/22.0.0-233/icjs/js-access_en_US.js"></script>   
 
     
         
@@ -27,26 +28,26 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="viewport" content="width=device-width, maximum-scale=1.0, user-scalable=no"/>
-        <link rel="stylesheet" type="text/css" href="/myhome/20.0.0-244/styles/portal.css" />
-        <link rel="stylesheet" type="text/css" href="/z/branding/adt/20.0.0/styles/portalCustomizable.css" />
-        <script type="text/javascript" src="/myhome/20.0.0-244/icjs/general.js"></script>
+        <link rel="stylesheet" type="text/css" href="/myhome/22.0.0-233/styles/portal.css" />
+        <link rel="stylesheet" type="text/css" href="/z/branding/adt/22.0.0/styles/portalCustomizable.css" />
+        <script type="text/javascript" src="/myhome/22.0.0-233/icjs/general.js"></script>
         <script type="text/javascript">g.domain="portal.adtpulse.com";</script>
-        <script type="text/javascript">g.contextPath="/myhome/20.0.0-244";</script>
-        <script type="text/javascript">g.isSessionTimeoutAllowed=false;</script>
-        <script type="text/javascript">g.webApplicationContext="/myhome/20.0.0-244";</script>
-	<script type="text/javascript" src="/myhome/20.0.0-244/icjs/jquery-3.4.1.min.js"></script>
+        <script type="text/javascript">g.contextPath="/myhome/22.0.0-233";</script>
+        <script type="text/javascript">if (typeof mfaSigninInProgress !== 'undefined') { g.isSessionTimeoutAllowed = false; } else { g.isSessionTimeoutAllowed = false }</script>
+        <script type="text/javascript">g.webApplicationContext="/myhome/22.0.0-233";</script>
+	<script type="text/javascript" src="/myhome/22.0.0-233/icjs/jquery-3.4.1.min.js"></script>
+	<script type="text/javascript" src="https://auth.pulse-api.io/v2/sso/US/devicefingerprint" integrity="sha384-H37TJs6fmaTeOSUhTXdFEvlfdAggaxXfjBxk/X/Y1TIhS777wr24khrw/wxOe3I0" crossOrigin="anonymous"></script>
         
-        <script type="text/javascript" src="/myhome/20.0.0-244/appcmn/ic_helper/ic_helper.js"></script>
-        <script type="text/javascript" src="/myhome/20.0.0-244/icjs/icDialog.js"></script>
-        <script type="text/javascript" src="/myhome/20.0.0-244/icjs/access.js"></script>
+        <script type="text/javascript" src="/myhome/22.0.0-233/appcmn/ic_helper/ic_helper.js"></script>
+        <script type="text/javascript" src="/myhome/22.0.0-233/icjs/icDialog.js"></script>
+        <script type="text/javascript" src="/myhome/22.0.0-233/icjs/access.js"></script>
         <title>
             ADT Pulse(TM) Interactive Solutions - Sign In
         </title>
         <style>a, div, table, td, tr, span, .bidi, .BIDI, .BiDi {direction: LTR;}</style>
     </head>
     <body class="p_preSignInWindowBody p_preSignInWindowBodyResponsive signinContent" topmargin="0" leftmargin="0" marginheight="0" marginwidth="0"
-              onload="setSignInInitialCursor();adjustButtonLabels();" >
-        
+              onload="setSignInInitialCursor();adjustButtonLabels();setFingerprint();" >
         
         <div class="responsiveContainer">
         	<div class="raisedBox">
@@ -79,7 +80,7 @@
                 <br /><br />
                 <table border="0" cellpadding="0" cellspacing="0" align="center" width="100%">
                 
-                <tr>
+                <tr id="unsupported_warning_row">
                     <td align="center">
                         <div class="browserWarning">
                             This web site will not work properly on your operating system and browser.<br />
@@ -100,7 +101,7 @@
                         <table align="center" border="0" cellpadding="3" cellspacing="0">
                             <tr>
                                 <td height="14" align="right"><span class="InputFieldDescription">Username:</span></td>
-                                <td height="14"><input id="username" name="usernameForm" class="responsiveFormInput" size="30" maxlength="100" AUTOCOMPLETE="off" autocorrect="off" autocapitalize="off" spellcheck="false" value=""><br/></td>
+                                <td height="14"><input id="username" name="usernameForm" class="responsiveFormInput" type="text" size="30" maxlength="100" AUTOCOMPLETE="off" autocorrect="off" autocapitalize="off" spellcheck="false" value=""><br/></td>
                             </tr>
                             
                                 <tr>
@@ -127,12 +128,14 @@
                     <td align=center><br /><a href="forgot.jsp">Forgot your username or password?</a></td>
                 </tr>
                 
-                </table><input type="hidden" name="networkid" value="">
+                </table>
+                <input type="hidden" name="networkid" value="">
+                <input type="hidden" id="fingerprint" name="fingerprint" value="" />
             </form>
             
                     <div class="p_signinLegalTextDiv">
                         <br /><br /><br />
-                        <span class="p_smallCommentText">Your use of this site signifies that you accept the ADT Pulse Website Terms of Use Agreement. &copy;2018 ADT LLC dba ADT Security Services. All rights reserved. ADT, the ADT logo, 800.ADT.ASAP and the product/service names listed in this document are marks and/or registered marks. Unauthorized use is strictly prohibited. Unauthorized use of this site is prohibited and may be subject to civil and criminal prosecution.</span>
+                        <span class="p_smallCommentText">Your use of this site signifies that you accept the ADT Pulse Website Terms of Use Agreement. &copy; 2021 ADT Security Services. All rights reserved. ADT, the ADT logo, 800.ADT.ASAP and the product/service names listed in this document are marks and/or registered marks. Unauthorized use is strictly prohibited. Unauthorized use of this site is prohibited and may be subject to civil and criminal prosecution.</span>
                     </div>
                 
             
@@ -142,7 +145,7 @@
                 </div>
 		</div>
         <span class="p_smallCommentText"><a class="p_footerLink" href="http://www.adt.com" target="_blank">ADT Security Services</a>
-            <span class="p_footerDivider"> | </span><a class="p_footerLink" href="https://www.adt.com/about-adt/legal/pulse-portal-privacy" target="_blank">Privacy Policy</a>
+            <span class="p_footerDivider"> | </span><a class="p_footerLink" href="https://www.adt.com/about-adt/legal/privacy-policy" target="_blank">Privacy Policy</a>
             <span class="p_footerDivider"> | </span><a class="p_footerLink" href="https://www.adt.com/about-adt/legal/adt-pulse-terms-of-use" target="_blank">ADT Pulse Terms of Use</a>
             <span class="p_footerDivider"> | </span><a class="p_footerLink" href="https://www.adt.com/help" target="_blank">Customer Support</a>
             </span>
@@ -150,4 +153,27 @@
 </body>
 </html>
 
+    <script>
+
+         const isInstaller = "false";
+         const isMobileInstallerImprEnabled = "false";
+         const warningRow = document.getElementById('unsupported_warning_row');
+         const mobileAppBanner = document.getElementById('p_mobileAppBanner');
+         const requestFromSmallMobileBrowser = isSmallDisplay() && mobileAndTabletCheck();
+
+         createCookie('X-mobile-browser', requestFromSmallMobileBrowser, 1);
+
+         if (isInstaller === "true" && isMobileInstallerImprEnabled === "true" && mobileAndTabletCheck()) {
+             // hide warning div
+             if (warningRow != null) {
+                 warningRow.style.display = "none";
+             }
+
+             // hide mobile app banner div
+             if (mobileAppBanner != null) {
+                 mobileAppBanner.style.display = "none";
+             }
+         }
+
+    </script>
 

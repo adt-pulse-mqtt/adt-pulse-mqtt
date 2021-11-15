@@ -21,7 +21,8 @@
       "keyfile": "privkey.pem",
       "pulse_login" : {
         "username": "",
-        "password": ""
+        "password": "",
+        "fingerprint": ""
       },
       "mqtt_host" : "core-mosquitto",
 	  "mqtt_url" : "",
@@ -41,7 +42,8 @@
       "keyfile": "str",
       "pulse_login" : {
         "username": "str",
-        "password": "str"
+        "password": "str",
+        "fingerprint": "str"
       },
        "mqtt_host" : "str",
 	   "mqtt_url" : "str?",
