@@ -13,7 +13,7 @@ var deviceUpdateCB = function () {};
 var zoneUpdateCB = function () {};
 var statusUpdateCB = function () {};
 
-const pulse = function(username, password) {
+const pulse = function(username = '', password = '', fingerprint = '') {
 
 	this.authenticated = false;
 	this.isAuthenticating = false;
@@ -21,7 +21,8 @@ const pulse = function(username, password) {
 
 	this.configure({
 		username: username,
-		password: password
+		password: password,
+		fingerprint: fingerprint
 	});
 
 	/* heartbeat */
@@ -102,11 +103,13 @@ module.exports = pulse;
 							jar: j,
 							headers: {
 								'Host': 'portal.adtpulse.com',
+								'Referrer': that.config.baseUrl+that.config.prefix+that.config.authURI,
 								'User-Agent': ua
 							},
 							form:{
 								username: that.config.username,
-								password: that.config.password
+								password: that.config.password,
+								fingerprint: that.config.fingerprint
 							}
 						},
 						function(err, httpResponse){
