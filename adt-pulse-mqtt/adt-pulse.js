@@ -13,7 +13,7 @@ var deviceUpdateCB = function () {};
 var zoneUpdateCB = function () {};
 var statusUpdateCB = function () {};
 
-const pulse = function(username, password, fingerprint) {
+const pulse = function(username = '', password = '', fingerprint = '') {
 
 	this.authenticated = false;
 	this.isAuthenticating = false;
