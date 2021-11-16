@@ -15,6 +15,7 @@
     "share:rw",
     "ssl"
   ],
+  "image": "adtpulsemqtt/adt-pulse-mqtt-{arch}",
   "options": {
       "ssl": false,
       "certfile": "fullchain.pem",
@@ -46,7 +47,7 @@
         "fingerprint": "str"
       },
        "mqtt_host" : "str",
-	   "mqtt_url" : "str?",
+	     "mqtt_url" : "str?",
        "mqtt_connect_options" : {
          "username" : "str",
          "password" : "str"
