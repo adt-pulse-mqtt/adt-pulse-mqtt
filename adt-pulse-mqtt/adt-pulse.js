@@ -378,11 +378,11 @@ module.exports = pulse;
 				ref= this.config.baseUrl+this.config.prefix+this.config.disarmURI+'&armstate='+ action.prev_state +"&arm="+action.newstate;
 			}
 				else{
-					url= this.config.baseUrl+this.config.prefix+this.config.disarmURI+'&armstate='+ action.prev_state +"&arm="+action.newstate;
+					url= this.config.baseUrl+this.config.prefix+this.config.disarmURI + '&armstate=' + action.prev_state + '&arm=' + action.newstate + '&sat=' + sat;
 				}
 		}
 		else{ // disarm
-			url= this.config.baseUrl+this.config.prefix+this.config.disarmURI+'&armstate='+ action.prev_state +"&arm=off";
+			url= this.config.baseUrl+this.config.prefix+this.config.disarmURI + '&armstate=' + action.prev_state + '&arm=off&sat=' + sat;
 		}
 
 		console.log((new Date()).toLocaleString() + ' Pulse.setAlarmState calling the url :' + url);
