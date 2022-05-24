@@ -406,7 +406,7 @@ module.exports = pulse;
 					if (action.newstate!="disarm" && action.isForced!=true && body.includes("Some sensors are open or reporting motion")){
 						console.log((new Date()).toLocaleString() + ' Pulse setAlarmState Some sensors are open. will force the alarm state');
 
-						sat = body.match(/sat=(.+?)&href/)[1];
+						sat = body.match(/sat=([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/)[1];
 						console.log((new Date()).toLocaleString() + ' Pulse setAlarmState New SAT ::'+ sat + "::");
 						action.isForced=true;
 						that.setAlarmState(action);
