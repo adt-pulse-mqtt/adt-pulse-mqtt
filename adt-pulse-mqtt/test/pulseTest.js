@@ -202,12 +202,13 @@ describe('ADT Pulse Disarm Test', function() {
 
   let pulse = rewire('../adt-pulse.js');
   pulse.__set__("authenticated","true");
+  pulse.__set__("sat","11111111-2222-3333-4444-555555555555");
   let testAlarm = new pulse("test","password");
   // Prevent executing sync
   clearInterval(testAlarm.pulseInterval);
 
   nock('https://portal.adtpulse.com')
-  .get('/myhome/13.0.0-153/quickcontrol/armDisarm.jsp?href=rest/adt/ui/client/security/setArmState&armstate=stay&arm=off')
+  .get('/myhome/13.0.0-153/quickcontrol/armDisarm.jsp?href=rest/adt/ui/client/security/setArmState&armstate=stay&arm=off&sat=11111111-2222-3333-4444-555555555555')
   .reply(200,'Disarmed');
 
   // Test disarming
@@ -223,12 +224,13 @@ describe('ADT Pulse Arm Stay Test', function() {
 
   let pulse = rewire('../adt-pulse.js');
   pulse.__set__("authenticated","true");
+  pulse.__set__("sat","11111111-2222-3333-4444-555555555555");
   let testAlarm = new pulse("test","password");
   // Prevent executing sync
   clearInterval(testAlarm.pulseInterval);
 
   nock('https://portal.adtpulse.com')
-  .get('/myhome/13.0.0-153/quickcontrol/armDisarm.jsp?href=rest/adt/ui/client/security/setArmState&armstate=disarmed&arm=stay')
+  .get('/myhome/13.0.0-153/quickcontrol/armDisarm.jsp?href=rest/adt/ui/client/security/setArmState&armstate=disarmed&arm=stay&sat=11111111-2222-3333-4444-555555555555')
   .reply(200,'Armed stay');
 
    // Test arm stay
@@ -244,12 +246,13 @@ describe('ADT Pulse Arm Away Test without forcing', function() {
 
   let pulse = rewire('../adt-pulse.js');
   pulse.__set__("authenticated","true");
+  pulse.__set__("sat","11111111-2222-3333-4444-555555555555");
   let testAlarm = new pulse("test","password");
   // Prevent executing sync
   clearInterval(testAlarm.pulseInterval);
 
   nock('https://portal.adtpulse.com')
-  .get('/myhome/13.0.0-153/quickcontrol/armDisarm.jsp?href=rest/adt/ui/client/security/setArmState&armstate=disarmed&arm=away')
+  .get('/myhome/13.0.0-153/quickcontrol/armDisarm.jsp?href=rest/adt/ui/client/security/setArmState&armstate=disarmed&arm=away&sat=11111111-2222-3333-4444-555555555555')
   .reply(200,'Armed stay');
 
    // Test arm away
@@ -265,14 +268,15 @@ describe('ADT Pulse Forced Arm Away Test', function() {
 
   let pulse = rewire('../adt-pulse.js');
   pulse.__set__("authenticated","true");
+  pulse.__set__("sat","11111111-2222-3333-4444-555555555555");
   let testAlarm = new pulse("test","password");
   // Prevent executing sync
   clearInterval(testAlarm.pulseInterval);
 
   nock('https://portal.adtpulse.com')
-  .get('/myhome/13.0.0-153/quickcontrol/armDisarm.jsp?href=rest/adt/ui/client/security/setArmState&armstate=disarmed&arm=away')
-  .reply(200,'Armed stay. Some sensors are open or reporting motion. sat=1234&href=')
-  .get('/myhome/13.0.0-153/quickcontrol/serv/RunRRACommand?sat=1234&href=rest/adt/ui/client/security/setForceArm&armstate=forcearm&arm=away')
+  .get('/myhome/13.0.0-153/quickcontrol/armDisarm.jsp?href=rest/adt/ui/client/security/setArmState&armstate=disarmed&arm=away&sat=11111111-2222-3333-4444-555555555555')
+  .reply(200,'Armed stay. Some sensors are open or reporting motion. sat=11111111-2222-3333-4444-555555555555&href=')
+  .get('/myhome/13.0.0-153/quickcontrol/serv/RunRRACommand?sat=1234&href=rest/adt/ui/client/security/setForceArm&armstate=forcearm&arm=away&sat=11111111-2222-3333-4444-555555555555')
   .reply(200, "Armed away - forced");
 
    // Test arm away
