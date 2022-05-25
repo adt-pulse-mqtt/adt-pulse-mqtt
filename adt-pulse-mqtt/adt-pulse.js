@@ -238,7 +238,8 @@ module.exports = pulse;
 								console.log((new Date().toLocaleString()) + ' Sensor: ' + s.id + ' Name: ' + s.name + ' Tags: ' + s.tags + ' State ' + s.state);
 								zoneUpdateCB(s);
 							})
-						if (newsat = body.match(/sat=([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/)[1]) { 
+						var newsat = body.match(/sat=([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/)[1]; 
+						if (newsat) { 
 							sat = newsat;
 							console.log((new Date()).toLocaleString() + ' Pulse setAlarmState New SAT ::'+ sat + "::");
 						}
@@ -378,15 +379,27 @@ module.exports = pulse;
 		if (action.newstate!='disarm'){
 			// we are arming.
 			if(action.isForced==true){
-				url= this.config.baseUrl+this.config.prefix+this.config.armURI+'?sat=' + sat + '&href=rest/adt/ui/client/security/setForceArm&armstate=forcearm&arm=' + encodeURIComponent(action.newstate);
+				if (sat) {
+					url= this.config.baseUrl+this.config.prefix+this.config.armURI+'?sat=' + sat + '&href=rest/adt/ui/client/security/setForceArm&armstate=forcearm&arm=' + encodeURIComponent(action.newstate);
+				} else {
+					url= this.config.baseUrl+this.config.prefix+this.config.armURI+'?href=rest/adt/ui/client/security/setForceArm&armstate=forcearm&arm=' + encodeURIComponent(action.newstate);
+				}
 				ref= this.config.baseUrl+this.config.prefix+this.config.disarmURI+'&armstate='+ action.prev_state +"&arm="+action.newstate;
 			}
 				else{
-					url= this.config.baseUrl+this.config.prefix+this.config.disarmURI+'&armstate='+ action.prev_state +"&arm="+action.newstate + "&sat=" + sat;
+					if (sat) {
+						url= this.config.baseUrl+this.config.prefix+this.config.disarmURI+'&armstate='+ action.prev_state +"&arm="+action.newstate + "&sat=" + sat;
+						} else {
+							url= this.config.baseUrl+this.config.prefix+this.config.disarmURI+'&armstate='+ action.prev_state +"&arm="+action.newstate
+						}
 				}
 		}
 		else{ // disarm
-			url= this.config.baseUrl+this.config.prefix+this.config.disarmURI+'&armstate='+ action.prev_state + "&arm=off" + "&sat=" + sat;
+			if (sat) {
+				url= this.config.baseUrl+this.config.prefix+this.config.disarmURI+'&armstate='+ action.prev_state + "&arm=off" + "&sat=" + sat;
+				} else {
+					url= this.config.baseUrl+this.config.prefix+this.config.disarmURI+'&armstate='+ action.prev_state + "&arm=off";
+				}
 		}
 
 		console.log((new Date()).toLocaleString() + ' Pulse.setAlarmState calling the url :' + url);
@@ -409,11 +422,11 @@ module.exports = pulse;
 					// need the new sat value;
 				if (action.newstate!="disarm" && action.isForced!=true && body.includes("Some sensors are open or reporting motion")){
 						console.log((new Date()).toLocaleString() + ' Pulse setAlarmState Some sensors are open. will force the alarm state');
-						if ( newsat = body.match(/sat=([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/)[1]) { 
+						newsat = body.match(/sat=([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/)[1]; 
+						if (newsat) { 
 							sat = newsat;
 							console.log((new Date()).toLocaleString() + ' Pulse setAlarmState New SAT ::'+ sat + "::");
 						}
-						console.log((new Date()).toLocaleString() + ' Pulse setAlarmState New SAT ::'+ sat + "::");
 						action.isForced=true;
 						that.setAlarmState(action);
 						deferred.resolve(body);
