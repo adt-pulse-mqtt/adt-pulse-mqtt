@@ -1,6 +1,6 @@
 {
   "name": "ADT Pulse MQTT",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "slug": "adtpulsemqtt",
   "description": "ADT Pulse Bridge using MQTT",
   "url":"https://github.com/adt-pulse-mqtt/adt-pulse-mqtt",
