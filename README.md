@@ -51,14 +51,15 @@ This add-on uses the Home Assistant integrations for MQTT Alarm Control Panel an
 
 To add the control panel:
 
-<pre>alarm_control_panel:
-  - platform: mqtt
-    name: "ADT Pulse"
-    state_topic: "home/alarm/state"
-    command_topic: "home/alarm/cmd"
-    payload_arm_home: "arm_home"
-    payload_arm_away: "arm_away"
-    payload_disarm: "disarm"
+<pre>
+mqtt:
+   alarm_control_panel:
+     - name: "ADT Pulse"
+       state_topic: "home/alarm/state"
+       command_topic: "home/alarm/cmd"
+       payload_arm_home: "arm_home"
+       payload_arm_away: "arm_away"
+       payload_disarm: "disarm"
 </pre>
 
 After running the add-on, get a list all the zones found. There are a couple of ways to do this, but they all involve subscribing to the wildcard topic "adt/zones/#".
@@ -72,25 +73,25 @@ I recommend the MQTT Snooper app on Android or just use the mosquito command-lin
 Once you know the names of MQTT topics for your zones, add the following to the configuration.yaml for each zone in binary_sensor:
 
 <pre>
-binary_sensor:
-  - platform: mqtt
-    name: "Kitchen Door"
-    state_topic: "adt/zone/Kitchen Door/state"
-    payload_on: "devStatOpen"
-    payload_off: "devStatOK"
-    device_class: door
-    retain: true
+mqtt:
+  binary_sensor:
+    - name: "Kitchen Door"
+      state_topic: "adt/zone/Kitchen Door/state"
+      payload_on: "devStatOpen"
+      payload_off: "devStatOK"
+      device_class: door
+      retain: true
 </pre>
 
 This will provide basic support for door sensors. You can add additional binary sensors for other possible state values. As an example, you can add support for a low battery condition on a sensor.
 <pre>
-binary_sensor:
-  - platform: mqtt
-    name: "Kitchen Door Sensor Battery"
-    state_topic: "adt/zone/Kitchen Door/state"
-    payload_on: "devStatLowBatt"
-    payload_off: "devStatOK"
-    device_class: battery
+mqtt:
+  binary_sensor:
+    - name: "Kitchen Door Sensor Battery"
+      state_topic: "adt/zone/Kitchen Door/state"
+      payload_on: "devStatLowBatt"
+      payload_off: "devStatOK"
+      device_class: battery
 </pre>
 
 Note: State topic names come from your Pulse configuration.
